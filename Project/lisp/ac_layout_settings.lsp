@@ -75,11 +75,6 @@
 
 (setq *rb-row-x-step* 0.3)
 
-<<<<<<< HEAD
-=======
-(setq *rb-level-gap* 3.0) ;; spacing between levels
-
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 
 ;; Cable leader / tag settings
 
@@ -101,19 +96,4 @@
 (setq *rb-row-chamfer-height* 0.3)
 
 
-<<<<<<< HEAD
-=======
-;; LEVEL LINE SETTINGS
-
-(setq *rb-level-line-left-offset* 5.0)   ;; how far left of panel
-(setq *rb-level-line-length* 50.0)       ;; total line length
-
-
-;; TEXT SETTINGS
-
-
-(setq *rb-level-text-height* 2.5)
-(setq *rb-level-text-offset* 2.0)        ;; gap left of line
-(setq *rb-level-text-rotation* 0.0)
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 

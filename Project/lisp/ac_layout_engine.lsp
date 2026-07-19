@@ -28,37 +28,6 @@
 )
 
 
-<<<<<<< HEAD
-=======
-
-
-
-(defun rb-group-doors-by-level (doors / result level entry) 
-
-  (setq result '())
-
-  (foreach door doors 
-    (setq level (nth 2 door))
-
-    (if (setq entry (assoc level result)) 
-      (setq result (subst 
-                     (cons level (append (cdr entry) (list door)))
-                     entry
-                     result
-                   )
-      )
-      (setq result (cons (cons level (list door)) result))
-    )
-  )
-
-  (vl-sort result 
-           '(lambda (a b) 
-              (< (car a) (car b))
-            )
-  )
-)
-
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 ;; Main panel layout function.
 ;;
 ;; Creates the complete riser layout for one panel:
@@ -107,11 +76,6 @@
     panel-insert-point
   )
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
   ;; Insert external PSU block when required
   (if (panel-requires-psu panel-type) 
 
@@ -130,17 +94,8 @@
     )
   )
 
-<<<<<<< HEAD
   ;; Get panel doors and cable information
   (setq doors (nth 3 panel))
-=======
-  ;; Get panel doors, level and cable information
-  (setq doors (nth 3 panel))
-  (setq panel-level (nth 4 panel))
-
-  (setq level-groups (rb-group-doors-by-level doors))
-  (print level-groups)
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 
   (setq panel-cables (get-panel-cables 
                        panel-id
@@ -155,7 +110,6 @@
   (setq door-count (length doors))
 
   ;; Process each door connected to panel
-<<<<<<< HEAD
   (setq door-index 0)
   (foreach door doors 
 
@@ -285,187 +239,10 @@
               "_CHAMFER"
               horizontal-ent
               vertical-ent
-=======
-  (setq level-index 0)
-
-  (foreach level-group level-groups 
-
-    (setq level (car level-group))
-    (setq level-offset (- level panel-level))
-    (setq level-doors (cdr level-group))
-
-    (setq level-y (- 
-                    (cadr panel-connection-point)
-                    (* level-offset *rb-level-gap*)
-                  )
-    )
-
-    (setq line-start (list 
-                       (- (car panel-connection-point) *rb-level-line-left-offset*)
-                       level-y
-                     )
-    )
-
-    (setq line-end (list 
-                     (+ (car line-start) *rb-level-line-length*)
-                     level-y
-                   )
-    )
-    (command "LINE" line-start line-end "")
-    (setq label-point (list 
-                        (- (car line-start) *rb-level-text-offset*)
-                        level-y
-                      )
-    )
-
-    (command "TEXT" 
-             label-point
-             *rb-level-text-height*
-             *rb-level-text-rotation*
-             (strcat "Level " (itoa level))
-    )
-
-    ;; reset door index per level
-    (setq door-index 0)
-
-    (foreach door level-doors 
-
-      ;; Determine door row and column position
-      (setq door-column (rem door-index *rb-door-limit*))
-
-      (setq door-row (fix (/ door-index *rb-door-limit*)))
-
-      ;; Calculate number of doors on current row
-      (setq row-door-count (min 
-                             *rb-door-limit*
-                             (- door-count (* door-row *rb-door-limit*))
-                           )
-      )
-
-      ;; Calculate starting point for current row
-      (setq row-start-point (list 
-                              (car panel-connection-point)
-                              (- 
-                                (cadr panel-connection-point)
-                                (+ 
-                                  (* level-offset *rb-level-gap*)
-                                  (* door-row *rb-door-row-gap*)
-                                )
-                              )
-                            )
-      )
-
-      ;; Calculate end point of horizontal trunk line
-      (setq row-line-end (rb-get-horizontal-line-end 
-                           row-start-point
-                           row-door-count
-                         )
-      )
-
-
-      ;; Add cable tag for each horizontal riser row.
-      ;;
-      ;; Only runs once per row (first door position).
-      ;; Calculates total cable quantities and creates tag.
-      (if (= door-column 0) 
-        (progn 
-          (setq row-cables (get-row-cables 
-                             panel-cables
-                             (* door-row *rb-door-limit*)
-                             row-door-count
-                           )
-          )
-
-          (setq wire-counts (count-cables row-cables))
-
-          (setq wire-tag (format-cable-tag wire-counts))
-
-
-          (setq wire-point (list 
-                             (+ (car row-start-point) *rb-wire-tag-offset*)
-                             (cadr row-start-point)
-                           )
-          )
-
-          (setq text-point (list 
-                             (+ (car wire-point))
-                             (+ (cadr wire-point) 0.25)
-                           )
-          )
-
-          (rb-draw-leader 
-            wire-point
-            text-point
-            wire-tag
-          )
-        )
-      )
-
-
-      ;; Draw horizontal trunk line for each door row.
-      ;;
-      ;; Additional rows are connected back to panel using
-      ;; vertical line and chamfer transition.
-
-      (if (= door-column 0) 
-
-        (progn 
-
-          ;; draw horizontal row line
-          (setq horizontal-ent (rb-draw-line 
-                                 row-start-point
-                                 row-line-end
-                               )
-          )
-
-
-          ;; only chamfer additional rows
-          (if (> door-row 0) 
-
-            (progn 
-
-              ;; vertical line starts from bottom of panel block
-              (setq vertical-start (list 
-                                     (- (car panel-insert-point) 0.3)
-                                     (- 
-                                       (cadr panel-insert-point)
-                                       *rb-panel-height*
-                                     )
-                                   )
-              )
-
-
-              ;; vertical goes downward
-              (setq vertical-end (list 
-                                   (car vertical-start)
-                                   (- (cadr vertical-start) 1.0)
-                                 )
-              )
-
-
-              ;; draw vertical
-              (setq vertical-ent (rb-draw-line 
-                                   vertical-start
-                                   vertical-end
-                                 )
-              )
-
-
-              ;; chamfer
-              (command "_CHAMFER" "_D" 0 0 "")
-
-
-              (command 
-                "_CHAMFER"
-                horizontal-ent
-                vertical-ent
-              )
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
             )
           )
         )
       )
-<<<<<<< HEAD
     )
 
     ;; Calculate door branch location
@@ -590,134 +367,6 @@
 
     (setq door-index (+ door-index 1))
   )
-=======
-
-      ;; Calculate door branch location
-      (setq door-position (rb-get-door-position 
-                            row-line-end
-                            door-column
-                            (cadr row-start-point)
-                          )
-      )
-
-      ;; Calculate bottom of door drop
-      (setq door-drop-point (rb-get-door-drop-point 
-                              door-position
-                            )
-      )
-
-      ;; Draw vertical door branch
-      (rb-draw-line 
-        door-position
-        door-drop-point
-      )
-
-      ;; Create door cable tag
-      ;;
-      ;; Uses cable information assigned to this door.
-      (setq door-cables (get-door-cables 
-                          panel-id
-                          (car door)
-                          cable-data
-                        )
-      )
-      (setq door-wire-tag (apply 'strcat 
-                                 (mapcar 
-                                   '(lambda (x) 
-                                      (strcat x ",")
-                                    )
-                                   door-cables
-                                 )
-                          )
-      )
-
-      (setq door-wire-tag (substr 
-                            door-wire-tag
-                            1
-                            (- (strlen door-wire-tag) 1)
-                          )
-      )
-
-      ;; Place door cable leader halfway down branch
-      (setq door-wire-point (list 
-                              (car door-position)
-                              (/ 
-                                (+ (cadr door-position) 
-                                   (cadr door-drop-point)
-                                )
-                                2.0
-                              )
-                            )
-      )
-
-
-      (setq door-text-point (list 
-                              (+ (car door-wire-point) 0.25)
-                              (cadr door-wire-point)
-                            )
-      )
-
-
-      (rb-draw-leader 
-        door-wire-point
-        door-text-point
-        door-wire-tag
-      )
-
-
-      ;; Insert devices connected to door.
-      ;;
-      ;; Devices are arranged:
-      ;; - two columns
-      ;; - multiple rows
-
-      (setq device-index 0)
-      (setq device-count (length (cadr door)))
-      (foreach device (cadr door) 
-        (setq col (rem device-index 2))
-        (setq row (fix (/ device-index 2)))
-
-        (setq pt (rb-get-device-position 
-                   door-drop-point
-                   col
-                   row
-                   device-count
-                 )
-        )
-
-        (setq blk (get-device-block device))
-
-
-        (if blk 
-          (rb-insert-device blk pt)
-          (print (strcat "Missing device: " device))
-        )
-
-
-        (setq device-index (+ device-index 1))
-      )
-
-      ;; Insert door identification label
-      (setq door-id-point (list 
-                            (+ (car door-drop-point) *rb-door-id-x-offset*)
-                            (+ 
-                              (cadr door-drop-point)
-                              *rb-door-id-offset*
-                            )
-                          )
-      )
-
-      (rb-insert-door-id 
-        (car door)
-        door-id-point
-      )
-
-      (setq door-index (+ door-index 1))
-    ) ;; end door loop
-
-    (setq level-index (+ level-index 1))
-  ) ;; end level loop
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 )
 
 
