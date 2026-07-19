@@ -31,11 +31,7 @@
 ;; Finds an existing panel in the panel model.
 ;;
 ;; Panel structure:
-<<<<<<< HEAD
 ;; ("ACP-01" "ACP" "ACP_FULL" doors)
-=======
-;; ("ACP-01" "ACP" "ACP_FULL" doors panel-level)
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 ;;
 ;; Panel ID is stored as the first item.
 
@@ -54,43 +50,24 @@
 ;;   Door list
 
 
-<<<<<<< HEAD
 (defun create-panel (panel-id panel-type panel-block door-id devices) 
-=======
-(defun create-panel (panel-id panel-type panel-block panel-level door-id door-level 
-                     devices
-                    ) 
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
 
   (list 
     panel-id
     panel-type
     panel-block
     (list 
-<<<<<<< HEAD
       (list door-id devices)
     )
-=======
-      (list door-id devices door-level)
-    )
-    panel-level
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
   )
 )
 
 
 
 ;; Adds a new door and devices to an existing panel.
-<<<<<<< HEAD
 (defun add-door-to-panel (panel door-id devices / doors) 
 
   ;; get existing doors
-=======
-(defun add-door-to-panel (panel door-id door-level devices / doors) 
-
-  ;; get existing doors
-  ;; doors remain at index 3
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
   (setq doors (nth 3 panel))
 
   ;; rebuild panel
@@ -100,14 +77,8 @@
     (nth 2 panel) ;; panel block
     (append 
       doors
-<<<<<<< HEAD
       (list (list door-id devices))
     )
-=======
-      (list (list door-id devices door-level))
-    )
-    (nth 4 panel) ;; panel level
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
   )
 )
 
@@ -136,33 +107,15 @@
 ;;   List of panels with associated doors and devices
 
 (defun build-data-model (raw-data / panels row panel-id panel-type panel-block 
-<<<<<<< HEAD
                          door-id devices existing-panel
-=======
-                         panel-level door-id door-level devices existing-panel
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
                         ) 
   (setq panels '())
   (foreach row raw-data 
     ;; CSV columns
     (setq panel-id (nth 2 row))
-<<<<<<< HEAD
     (setq panel-type (nth 3 row))
     (setq panel-block (nth 4 row))
     (setq door-id (nth 1 row))
-=======
-
-    (setq panel-type (nth 3 row))
-
-    (setq panel-block (nth 4 row))
-
-    (setq panel-level (rb-convert-level (nth 10 row)))
-
-    (setq door-id (nth 1 row))
-
-    (setq door-level (rb-convert-level (nth 9 row)))
-
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
     (setq devices (split-devices 
                     (nth 7 row)
                   )
@@ -177,10 +130,6 @@
                      (add-door-to-panel 
                        existing-panel
                        door-id
-<<<<<<< HEAD
-=======
-                       door-level
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
                        devices
                      )
                      panels
@@ -188,13 +137,7 @@
       )
       ;; NEW PANEL
       (setq panels (cons 
-<<<<<<< HEAD
                      (create-panel panel-id panel-type panel-block door-id devices)
-=======
-                     (create-panel panel-id panel-type panel-block panel-level 
-                                   door-id door-level devices
-                     )
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
                      panels
                    )
       )
@@ -363,12 +306,3 @@
   result
 )
 
-<<<<<<< HEAD
-=======
-(defun rb-convert-level (lvl)
-  (if lvl
-    (atoi lvl)
-    nil
-  )
-)
->>>>>>> 34546bd468feb5e2f2d8d836be834b649e45b19c
