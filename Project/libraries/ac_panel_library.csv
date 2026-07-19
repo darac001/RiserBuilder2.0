@@ -1,0 +1,3 @@
+﻿Panel Type,Block Name,External PSU Required,PS Block Name
+ACP,ACP_FULL,YES,ACPS_FULL
+ACP_PS,ACP_FULL_W_Power_Supply,NO,
