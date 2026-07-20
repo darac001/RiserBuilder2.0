@@ -1,0 +1,6 @@
+﻿Acronym,Block Name,Description
+KP,IDS_KP_Alarm_Keypad,Alarm Keypad
+DC,IDS_DC_Door_Contact,"Door Contact, Recessed"
+MD,IDS_MD_Motion_Detector,Motion Detector
+GB,IDS_GB_Glass_Break,Glasb Break Sensor
+DA,IDS_DA_Duress_Alarm,Duress Alarm
