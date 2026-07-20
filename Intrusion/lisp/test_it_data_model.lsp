@@ -21,6 +21,7 @@
   (prompt "\n\nGenerated Model:")
 
   (princ model)
+  (print (length model))
 
 
   (prompt "\n\nTest complete.")

@@ -24,7 +24,6 @@
   (while (setq line (read-line file)) 
 
     (setq data (cons line data))
-
   )
 
   (close file)
@@ -32,7 +31,6 @@
   ;; cons adds elements to beginning,
   ;; reverse restores original order
   (reverse data)
-
 )
 
 
@@ -54,12 +52,11 @@
 
     (setq ch (substr str i 1))
 
-    (cond
+    (cond 
 
       ((= ch "\"")
 
        (setq inQuotes (not inQuotes))
-
       )
 
 
@@ -68,27 +65,22 @@
        (setq result (cons token result))
 
        (setq token "")
-
       )
 
 
       (T
 
        (setq token (strcat token ch))
-
       )
-
     )
 
     (setq i (1+ i))
-
   )
 
 
   (setq result (cons token result))
 
   (reverse result)
-
 )
 
 
@@ -101,11 +93,11 @@
 ;; Returns:
 ;;   Field without surrounding quotes
 
-(defun stripQuotes (s)
+(defun stripQuotes (s) 
 
-  (if
+  (if 
 
-    (and
+    (and 
       (> (strlen s) 1)
       (= (substr s 1 1) "\"")
       (= (substr s (strlen s) 1) "\"")
@@ -114,9 +106,7 @@
     (substr s 2 (- (strlen s) 2))
 
     s
-
   )
-
 )
 
 
@@ -131,26 +121,23 @@
 ;; Returns:
 ;;   Parsed CSV data list
 
-(defun parse-csv (lines / rows)
+(defun parse-csv (lines / rows) 
 
   ;; remove header
   (setq lines (cdr lines))
 
 
-  (foreach line lines
+  (foreach line lines 
 
-    (setq rows
-      (cons
-        (mapcar 'stripQuotes (parseCSV line))
-        rows
-      )
+    (setq rows (cons 
+                 (mapcar 'stripQuotes (parseCSV line))
+                 rows
+               )
     )
-
   )
 
 
   (reverse rows)
-
 )
 
 
@@ -163,8 +150,8 @@
 ;;;
 ;;; ============================================================
 
-(setq *rb-input-lines* nil)
-(setq *rb-input-data* nil)
+(setq *it-input-lines* nil)
+(setq *it-input-data* nil)
 
 
 
@@ -182,20 +169,37 @@
 ;;;
 ;;; ============================================================
 
-(defun rb-load-input () 
+(defun it-load-input (/ filename) 
 
-  (setq *rb-input-lines*
-        (read-csv (it-get-input-file))
-  )
+  (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/it_input.csv")
 
 
-  (setq *rb-input-data*
-        (parse-csv *rb-input-lines*)
-  )
+  (setq *it-input-lines* (read-csv filename))
+
+
+  (setq *it-input-data* (parse-csv *it-input-lines*))
 
 
   (prompt "\nIntrusion input CSV loaded.")
 
   (princ)
+)
 
+(defun c:TEST-IT-LOAD () 
+
+  (prompt "\n--- Testing Intrusion Input Load ---")
+
+  (it-load-input)
+
+
+  (prompt "\n\nLast row:")
+
+  (princ 
+    (car (last *it-input-data*))
+  )
+
+
+  (prompt "\n\nLoad test complete.")
+
+  (princ)
 )
