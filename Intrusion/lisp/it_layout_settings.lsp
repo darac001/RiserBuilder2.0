@@ -30,7 +30,7 @@
 
 ;; Daisy chain row spacing
 
-(setq *it-row-gap* 2.0)
+(setq *it-row-gap* 3.0)
 
 
 ;; ------------------------------------------------------------

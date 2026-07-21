@@ -46,6 +46,37 @@
 )
 
 
+
+(defun split-it-device-rows (devices / rows row count)
+
+  (setq rows '())
+  (setq row '())
+  (setq count 0)
+
+  (foreach device devices
+
+    (setq row (append row (list device)))
+    (setq count (+ count 1))
+
+    ;; reached row limit
+    (if (= count *it-device-limit*)
+
+      (progn
+        (setq rows (append rows (list row)))
+        (setq row '())
+        (setq count 0)
+      )
+    )
+  )
+
+  ;; add remaining devices
+  (if row
+    (setq rows (append rows (list row)))
+  )
+
+  rows
+)
+
 (defun c:TEST-IT-LOOPS (/ panel) 
 
 

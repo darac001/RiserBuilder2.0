@@ -329,34 +329,50 @@
 ;;
 ;; ------------------------------------------------------------
 
-(defun count-it-cables (cable-data / counts cable item) 
+(defun count-it-cables (cable-data / counts item parts cable qty part) 
 
   (setq counts '())
 
-
   (foreach item cable-data 
 
-    (setq cable (nth 2 item))
+    ;; split cable field
+    (setq parts (parseCSV (nth 2 item)))
 
+    (foreach part parts 
 
-    (if (assoc cable counts) 
+      ;; default quantity
+      (setq qty 1)
 
-      (setq counts (subst 
-                     (cons cable (+ 1 (cdr (assoc cable counts))))
-                     (assoc cable counts)
-                     counts
-                   )
+      ;; check for number prefix
+      (if (numberp (read (substr part 1 1))) 
+
+        (progn 
+          (setq qty (atoi (substr part 1 1)))
+          (setq cable (substr part 2))
+        )
+
+        (setq cable part)
       )
 
 
-      (setq counts (cons 
-                     (cons cable 1)
-                     counts
-                   )
+      ;; add to totals
+      (if (assoc cable counts) 
+
+        (setq counts (subst 
+                       (cons cable (+ qty (cdr (assoc cable counts))))
+                       (assoc cable counts)
+                       counts
+                     )
+        )
+
+        (setq counts (cons 
+                       (cons cable qty)
+                       counts
+                     )
+        )
       )
     )
   )
-
 
   counts
 )
