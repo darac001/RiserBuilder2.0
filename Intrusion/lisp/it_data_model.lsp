@@ -219,3 +219,264 @@
 
   (reverse panels)
 )
+
+
+
+;; ============================================================
+;; Intrusion Cable Data Model
+;;
+;; Builds cable information from input CSV
+;;
+;; ============================================================
+
+
+
+;; ------------------------------------------------------------
+;; Build Cable Model
+;;
+;; Structure:
+;;
+;; (
+;;   Panel ID
+;;   Device ID
+;;   Cable
+;;   Loop Type
+;; )
+;;
+;; ------------------------------------------------------------
+
+(defun build-it-cable-model (raw-data / cables row) 
+
+  (setq cables '())
+
+
+  (foreach row raw-data 
+
+    (setq cables (cons 
+                   (list 
+                     (nth 2 row) ;; Panel ID
+                     (nth 1 row) ;; Device ID
+                     (nth 5 row) ;; Cable
+                     (nth 8 row) ;; Loop Type
+                   )
+                   cables
+                 )
+    )
+  )
+
+
+  (reverse cables)
+)
+
+
+
+;; ------------------------------------------------------------
+;; Get all cables for a panel
+;; ------------------------------------------------------------
+
+(defun get-it-panel-cables (panel-id cable-data / result item) 
+
+  (setq result '())
+
+
+  (foreach item cable-data 
+
+    (if (= panel-id (nth 0 item)) 
+
+      (setq result (cons item result))
+    )
+  )
+
+
+  (reverse result)
+)
+
+
+
+;; ------------------------------------------------------------
+;; Get cable for one device
+;; ------------------------------------------------------------
+
+(defun get-it-device-cable (panel-id device-id cable-data / result item) 
+
+  (setq result nil)
+
+
+  (foreach item cable-data 
+
+    (if 
+      (and 
+        (= panel-id (nth 0 item))
+        (= device-id (nth 1 item))
+      )
+
+      (setq result (nth 2 item))
+    )
+  )
+
+
+  result
+)
+
+
+
+;; ------------------------------------------------------------
+;; Count cable quantities
+;;
+;; Example:
+;;
+;; ((B . 2) (C . 3))
+;;
+;; ------------------------------------------------------------
+
+(defun count-it-cables (cable-data / counts cable item) 
+
+  (setq counts '())
+
+
+  (foreach item cable-data 
+
+    (setq cable (nth 2 item))
+
+
+    (if (assoc cable counts) 
+
+      (setq counts (subst 
+                     (cons cable (+ 1 (cdr (assoc cable counts))))
+                     (assoc cable counts)
+                     counts
+                   )
+      )
+
+
+      (setq counts (cons 
+                     (cons cable 1)
+                     counts
+                   )
+      )
+    )
+  )
+
+
+  counts
+)
+
+
+
+;; ------------------------------------------------------------
+;; Format cable tag
+;;
+;; Example:
+;; ((B . 2) (C . 3))
+;;
+;; Output:
+;; 2B,3C
+;;
+;; ------------------------------------------------------------
+
+(defun format-it-cable-tag (counts / result sorted item) 
+
+  (setq sorted (vl-sort 
+                 counts
+                 '(lambda (a b) 
+                    (< (car a) (car b))
+                  )
+               )
+  )
+
+
+  (setq result "")
+
+
+  (foreach item sorted 
+
+    (setq result (strcat 
+                   result
+                   (if (= result "") 
+                     ""
+                     ","
+                   )
+                   (itoa (cdr item))
+                   (car item)
+                 )
+    )
+  )
+
+
+  result
+)
+
+(defun get-it-home-run-cables (panel-id cable-data / result item) 
+
+  (setq result '())
+
+  (foreach item cable-data 
+
+    (if 
+      (and 
+        (= panel-id (nth 0 item))
+        (= "Home_Run" (nth 3 item))
+      )
+
+      (setq result (cons item result))
+    )
+  )
+
+  (reverse result)
+)
+
+
+(defun c:TEST-IT-CABLES (/ cable-data panel-cables counts) 
+
+  (prompt "\n--- Testing Intrusion Cable Model ---")
+
+
+  ;; make sure input exists
+  (if (not *it-input-data*) 
+    (it-load-input)
+  )
+
+
+  ;; build cable model
+  (setq cable-data (build-it-cable-model *it-input-data*))
+
+
+  (prompt "\n\nCable model:")
+  (princ cable-data)
+
+
+
+  ;; first panel
+  (setq panel-cables (get-it-panel-cables 
+                       "ACP-01"
+                       cable-data
+                     )
+  )
+
+
+  (prompt "\n\nACP-01 cables:")
+  (princ panel-cables)
+
+
+
+  ;; count
+  (setq counts (count-it-cables panel-cables))
+
+
+  (prompt "\n\nCable counts:")
+  (princ counts)
+
+
+
+  (prompt "\n\nFormatted tag:")
+  (princ 
+    (format-it-cable-tag counts)
+  )
+
+
+  (prompt "\n\nCable test complete.")
+
+  (princ)
+)
+
+

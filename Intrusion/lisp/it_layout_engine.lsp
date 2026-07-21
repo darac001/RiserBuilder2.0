@@ -1,11 +1,9 @@
 ;; ============================================================
 ;; Intrusion Riser Layout Engine
+;; Version 0.2
 ;;
-;; Version 0.1
-;;
-;; Currently:
-;; - Panel placement only
-;;
+;; - Correct trunk topology (feeds INTO panel)
+;; - Devices placed along trunk (left → right)
 ;; ============================================================
 
 
@@ -15,7 +13,6 @@
 ;; ------------------------------------------------------------
 
 (defun it-insert-panel (block-name insert-point) 
-
   (command "_-INSERT" block-name insert-point 1 1 0 "")
 )
 
@@ -23,19 +20,9 @@
 
 ;; ------------------------------------------------------------
 ;; Layout Single Panel
-;;
-;; Panel structure:
-;;
-;; (
-;;  Panel ID
-;;  Panel Type
-;;  Panel Block
-;;  Devices
-;; )
-;;
 ;; ------------------------------------------------------------
 
-(defun it-layout-panel (panel base-point) 
+(defun it-layout-panel (panel base-point cable-data / panel-type block-name) 
 
   (setq panel-type (nth 1 panel))
 
@@ -45,12 +32,176 @@
 
   (prompt (strcat "\nBlock Name: " block-name))
 
-  (it-insert-panel 
-    block-name
-    base-point
+  ;; insert panel
+  (it-insert-panel block-name base-point)
+
+  ;; layout home runs
+  (it-layout-home-runs panel base-point cable-data)
+)
+
+
+
+;; ------------------------------------------------------------
+;; Layout Home Runs (FIXED)
+;; ------------------------------------------------------------
+
+(defun it-layout-home-runs (panel base-point cable-data / devices panel-left 
+                            trunk-start trunk-end x y dev-block cable wire-point 
+                            text-point panel-cables wire-counts wire-tag
+                           ) 
+
+  (setq devices (get-it-home-run-devices panel))
+
+  (setq panel-cables (get-it-home-run-cables 
+                       (nth 0 panel)
+                       cable-data
+                     )
+  )
+
+
+  (setq wire-counts (count-it-cables panel-cables))
+
+
+  (setq wire-tag (format-it-cable-tag wire-counts))
+
+
+
+
+  (setq y (- (cadr base-point) (/ *it-panel-height* 2)))
+
+  ;; LEFT EDGE OF PANEL
+  (setq panel-left (- (car base-point) (/ *it-panel-width* 2.0)))
+
+  ;; TRUNK START (far left)
+  (setq trunk-start (list (- panel-left (* (length devices) *it-device-spacing*)) 
+                          y
+                    )
+  )
+
+  ;; TRUNK END (at panel)
+  (setq trunk-end (list panel-left y))
+
+  ;; DRAW TRUNK
+  (command "LINE" trunk-start trunk-end "")
+
+
+(it-draw-leader
+
+  (list
+    (- (car trunk-end) 0.5)
+    (cadr trunk-end)
+  )
+
+  (list
+    (- (car trunk-end) 0.5)
+    (+ (cadr trunk-end) 0.4)
+  )
+
+  wire-tag
+
+)
+
+
+  ;; START PLACING DEVICES FROM LEFT → RIGHT
+  (setq x (car trunk-start))
+
+  (foreach device devices 
+
+    (setq dev-block (nth 2 device))
+
+
+
+
+    ;; vertical drop
+    (command "LINE" 
+             (list x y)
+             (list x (- y *it-device-drop*))
+             ""
+    )
+
+
+
+    ;; insert device
+    (it-insert-device 
+      dev-block
+      (list x (- y *it-device-drop*))
+    )
+    (it-place-device-id 
+      device
+      (list x (- y *it-device-drop*))
+    )
+
+    ;; get cable
+    (setq cable (get-it-device-cable 
+                  (nth 0 panel)
+                  (nth 0 device)
+                  cable-data
+                )
+    )
+
+
+    ;; leader halfway down drop
+    (setq wire-point (list 
+                       x
+                       (- y (/ *it-device-drop* 2.0))
+                     )
+    )
+
+
+    (setq text-point (list 
+                       (+ x *it-wire-tag-offset*)
+                       (- y (/ *it-device-drop* 2.0))
+                     )
+    )
+
+
+    (it-draw-leader 
+      wire-point
+      text-point
+      cable
+    )
+
+
+    ;; move RIGHT toward panel
+    (setq x (+ x *it-device-spacing*))
   )
 )
 
+
+
+
+(defun it-insert-device (block-name insert-point) 
+  (command "_-INSERT" block-name insert-point 1 1 0 "")
+)
+
+
+
+(defun it-place-device-id (device insert-point / label pt) 
+
+  ;; assume device structure: (... ID TYPE BLOCK ...)
+  (setq label (nth 0 device))
+
+  (setq pt (list 
+             (+ (car insert-point) *it-device-id-x-offset*)
+             (+ (cadr insert-point) *it-device-id-offset*)
+           )
+  )
+
+  (command "TEXT" pt *it-device-id-text-height* 0 label)
+)
+
+
+
+
+(defun it-draw-leader (wire-point text-point text) 
+
+  (command 
+    "_MLEADER"
+    wire-point
+    text-point
+    text
+  )
+)
 
 
 ;; ------------------------------------------------------------
@@ -61,48 +212,41 @@
 
   (prompt "\n--- Drawing Intrusion Riser ---")
 
-
   ;; Load libraries
   (it-load-device-library)
   (it-load-panel-library)
-
 
   ;; Load input if needed
   (if (not *it-input-data*) 
     (it-load-input)
   )
 
-
   ;; Build model
   (setq system-data (build-it-data-model *it-input-data*))
-
 
   ;; Disable osnap
   (setq old-osnap (getvar "OSMODE"))
   (setvar "OSMODE" 0)
 
-
   ;; Starting Y position
   (setq y 0)
 
-
+  (setq cable-data (build-it-cable-model *it-input-data*))
   ;; Draw panels
   (foreach panel system-data 
 
     (it-layout-panel 
       panel
       (list 0 y)
+      cable-data
     )
 
     (setq y (- y *it-panel-spacing*))
   )
 
-
   ;; Restore osnap
   (setvar "OSMODE" old-osnap)
 
-
   (prompt "\nIntrusion riser complete.")
-
   (princ)
 )

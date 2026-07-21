@@ -48,7 +48,7 @@
 
 
 
-;;Door brach settings
+;;Door branch settings
 
 ;; vertical length of the branch line
 (setq *rb-door-drop* 1.0)
