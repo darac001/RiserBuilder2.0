@@ -1,1 +1,5 @@
-(princ(count-it-cables (get-it-panel-cables "ACP-01" (build-it-cable-model *it-input-data*))))
+(princ (get-it-row-cables "ACP-01" (car rows) cables))
+(princ (format-it-cable-tag (count-it-cables (get-it-row-cables "ACP-01" (car rows) cables))))
+
+
+(princ (get-it-device-cable "ACP-02" "MD#01" (build-it-cable-model *it-input-data*)))

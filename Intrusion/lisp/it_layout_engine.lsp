@@ -46,51 +46,19 @@
 ;; ------------------------------------------------------------
 
 (defun it-layout-home-runs (panel base-point cable-data / devices device-rows 
-                            panel-left trunk-start trunk-end x y dev-block cable 
-                            wire-point text-point panel-cables wire-counts wire-tag 
-                            row
+                            panel-left trunk-start trunk-end x y row-y dev-block cable 
+                            wire-point text-point row-cables wire-counts wire-tag row
                            ) 
 
   (setq devices (get-it-home-run-devices panel))
 
   (setq device-rows (split-it-device-rows devices))
-  (prompt "\nDEVICE ROWS:")
-  (princ device-rows)
-
-  (setq panel-cables (get-it-home-run-cables 
-                       (nth 0 panel)
-                       cable-data
-                     )
-  )
-
-
-  (setq wire-counts (count-it-cables panel-cables))
-
-
-  (setq wire-tag (format-it-cable-tag wire-counts))
-
-
 
 
   (setq y (- (cadr base-point) (/ *it-panel-height* 2)))
 
   ;; LEFT EDGE OF PANEL
   (setq panel-left (- (car base-point) (/ *it-panel-width* 2.0)))
-
-  ; ;; TRUNK START (far left)
-  ; (setq trunk-start (list
-  ;                     (- panel-left
-  ;                        (+ *it-device-start-offset*
-  ;                           (* (- (length row) 1) *it-device-spacing*)
-  ;                        )
-  ;                     )
-  ;                     row-y
-  ;                   )
-  ; )
-
-  ; ;; TRUNK END (at panel)
-  ; (setq trunk-end (list panel-left y))
-
 
 
 
@@ -118,6 +86,19 @@
 
     (command "LINE" trunk-start trunk-end "")
 
+    ;; calculate cable tag for this row
+
+    (setq row-cables (get-it-row-cables 
+                       (nth 0 panel)
+                       row
+                       cable-data
+                     )
+    )
+   
+    (setq wire-counts (count-it-cables row-cables))
+ 
+
+    (setq wire-tag (format-it-cable-tag wire-counts))
 
     (it-draw-leader 
 
@@ -236,21 +217,11 @@
   ;; ------------------------------------------------------------
   ;; Draw Complete Intrusion Riser
   ;; ------------------------------------------------------------
-(defun IT-DRAW-RISER (/ system-data y old-osnap) 
+(defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height) 
 
   (prompt "\n--- Drawing Intrusion Riser ---")
 
-  ;; Load libraries
-  (it-load-device-library)
-  (it-load-panel-library)
 
-  ;; Load input if needed
-  (if (not *it-input-data*) 
-    (it-load-input)
-  )
-
-  ;; Build model
-  (setq system-data (build-it-data-model *it-input-data*))
 
   ;; Disable osnap
   (setq old-osnap (getvar "OSMODE"))
@@ -259,17 +230,37 @@
   ;; Starting Y position
   (setq y 0)
 
-  (setq cable-data (build-it-cable-model *it-input-data*))
-  ;; Draw panels
+
+  (setq y 0)
+
+
   (foreach panel system-data 
 
+    ;; calculate current panel height
+    (setq panel-height (it-get-panel-layout-height panel))
+
+
+    (prompt "\nDrawing panel: ")
+    (princ (nth 0 panel))
+
+    (prompt "\nHeight: ")
+    (princ panel-height)
+
+
+    ;; draw panel
     (it-layout-panel 
       panel
       (list 0 y)
       cable-data
     )
 
-    (setq y (- y *it-panel-spacing*))
+
+    ;; move upward for next panel
+    (setq y (+ y 
+               panel-height
+               *it-panel-spacing*
+            )
+    )
   )
 
   ;; Restore osnap

@@ -319,6 +319,43 @@
 )
 
 
+;; ------------------------------------------------------------
+;; Get cables for a device row
+;;
+;; Input:
+;;   panel-id
+;;   row-devices
+;;   cable-data
+;;
+;; Returns:
+;;   cable entries belonging to devices in this row
+;;
+;; ------------------------------------------------------------
+
+(defun get-it-row-cables (panel-id row-devices cable-data / result device item)
+
+  (setq result '())
+
+  (foreach device row-devices
+
+    (foreach item cable-data
+
+      (if
+        (and
+          (= panel-id (nth 0 item))
+          (= (nth 0 device) (nth 1 item))
+        )
+
+        (setq result
+               (cons item result)
+        )
+      )
+    )
+  )
+
+  (reverse result)
+)
+
 
 ;; ------------------------------------------------------------
 ;; Count cable quantities
