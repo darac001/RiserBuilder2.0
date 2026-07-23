@@ -118,8 +118,22 @@
     (nth 0 panel)
   )
 
+  ;; create shared layout state
+
+  (setq layout-state (it-create-layout-state base-point))
+
+
   ;; layout home runs
-  (it-layout-home-runs panel base-point cable-data)
+
+  (setq layout-state (it-layout-home-runs 
+                       panel
+                       base-point
+                       cable-data
+                       layout-state
+                     )
+  )
+
+
 
 
   (setq home-run-devices (get-it-home-run-devices panel))
@@ -129,31 +143,24 @@
                       )
   )
 
-
   (setq daisy-y (- 
                   (cadr base-point)
-
                   (/ *it-panel-height* 2.0)
-
                   (* home-run-rows *it-row-spacing*)
                 )
   )
 
   ;; layout daisy loops
   (it-layout-daisy-loops 
-
     panel
-
     (list 
-
       (- 
         (car base-point)
-
         (/ *it-panel-width* 2.0)
       )
-
       daisy-y
     )
+    layout-state
   )
 )
 
@@ -163,9 +170,10 @@
 ;; Layout Home Runs 
 ;; ------------------------------------------------------------
 
-(defun it-layout-home-runs (panel base-point cable-data / devices device-rows 
-                            panel-left trunk-start trunk-end x y row-y dev-block cable 
-                            wire-point text-point row-cables wire-counts wire-tag row
+(defun it-layout-home-runs (panel base-point cable-data layout-state / devices 
+                            device-rows panel-left trunk-start trunk-end x y row-y 
+                            dev-block cable wire-point text-point row-cables 
+                            wire-counts wire-tag row
                            ) 
 
   (setq devices (get-it-home-run-devices panel))
@@ -187,11 +195,13 @@
   (setq row-y y)
   (setq is-first T)
 
-  (setq row-index 0)
+
 
   (foreach row device-rows 
 
-    (setq row-index (1+ row-index))
+
+
+    (setq row-index (1+ (it-get-state-row layout-state)))
     (setq panel-bottom (- (cadr base-point) *it-panel-height*))
 
     (setq trunk-start (list 
@@ -339,8 +349,15 @@
 
     ;; move down after completing one row
     (setq row-y (- row-y *it-row-spacing*))
+
+    (setq layout-state (list 
+                         row-y
+                         row-index
+                       )
+    )
     (setq is-first nil)
   ) ;; end foreach row
+  layout-state
 ) ;; end function
 
 
@@ -541,7 +558,9 @@
 ;; Draw All Daisy Chain Loops For Panel
 ;; D3 -------- D2 -------- D1 -------- PANEL
 
-(defun it-layout-daisy-loops (panel base-point / devices loops loop row-y) 
+(defun it-layout-daisy-loops (panel base-point layout-state / devices loops loop 
+                              row-y row-index offset-x panel-bottom
+                             ) 
 
   ;; get all daisy devices
   (setq devices (get-it-daisy-devices panel))
@@ -549,8 +568,61 @@
   (setq loops (get-it-daisy-loops devices))
   ;; start first loop at panel connection point
   (setq row-y (cadr base-point))
+
+  (setq row-index (it-get-state-row layout-state))
+
+
+
+  (setq panel-bottom (- (cadr base-point) 
+                        (/ *it-panel-height* 2.0)
+                     )
+  )
   ;; draw every loop
   (foreach loop loops 
+
+
+    (prompt "\nDaisy row index: ")
+    (princ row-index)
+
+    (prompt "\nDaisy row Y: ")
+    (princ row-y)
+    ;; ------------------------------------------------
+    ;; Connect this row back to panel
+    ;;
+    ;; Row 0 = directly connected
+    ;; Other rows need riser connection
+    ;; ------------------------------------------------
+
+    (if (> row-index 0) 
+
+      (progn 
+
+        ;; stagger vertical location
+        (setq offset-x (+ (car base-point) 
+                          (* row-index *it-riser-offset-step*)
+                       )
+        )
+
+
+        ;; horizontal connection from loop trunk
+        (rb-set-layer *it-layer-cable*)
+
+        (command "LINE" 
+                 (list (car base-point) row-y)
+                 (list offset-x row-y)
+                 ""
+        )
+
+
+        ;; vertical riser back to panel
+
+        (command "LINE" 
+                 (list offset-x row-y)
+                 (list offset-x panel-bottom)
+                 ""
+        )
+      )
+    )
     (it-layout-daisy-loop 
       panel
       loop
@@ -562,7 +634,9 @@
 
     ;; move down for next loop
     (setq row-y (- row-y *it-row-spacing*))
+    (setq row-index (1+ row-index))
   )
+  (list row-y row-index)
 )
 
 

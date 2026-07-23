@@ -1,5 +1,375 @@
-(princ (get-it-row-cables "ACP-01" (car rows) cables))
-(princ (format-it-cable-tag (count-it-cables (get-it-row-cables "ACP-01" (car rows) cables))))
-
-
-(princ (get-it-device-cable "ACP-02" "MD#01" (build-it-cable-model *it-input-data*)))
+Enter text: KP#01
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_KP_Alarm_Keypad>: IDS_KP_Alarm_Keypad
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: KP#02
+Command:
+Devices: 0
+Rows: 0
+Panel height: 1.4375
+Device drop: 1.0
+Row spacing: 3.0
+Panel Type: IDCP_PS
+Block Name: IDCP_FULL_-INSERT Enter block name or [?] <IDS_KP_Alarm_Keypad>: IDCP_FULL
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: _-INSERT Enter block name or [?] <IDCP_FULL>: IDCP_PS_FULL
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command:
+Daisy row index: 0
+Daisy row Y: 11.7188_MLEADER
+Specify leader arrowhead location or [pre enter Text/leader Landing first/Content first/Options] <Options>:
+Specify leader landing location:
+Enter text: B
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDCP_PS_FULL>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#01
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#02
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#03
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#04
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#05
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#06
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#07
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#08
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#09
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#10
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#11
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#12
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#13
+Command:
+Daisy row index: 1
+Daisy row Y: 8.71875LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _MLEADER
+Specify leader arrowhead location or [pre enter Text/leader Landing first/Content first/Options] <Options>:
+Specify leader landing location:
+Enter text: B
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#14
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#15
+Command:
+Daisy row index: 2
+Daisy row Y: 5.71875LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _MLEADER
+Specify leader arrowhead location or [pre enter Text/leader Landing first/Content first/Options] <Options>:
+Specify leader landing location:
+Enter text: B
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#16
+Command: LINE
+Specify first point:
+Specify next point or [Undo]:
+Specify next point or [Undo]:
+Command: _-INSERT Enter block name or [?] <IDS_DC_Door_Contact>: IDS_DC_Door_Contact
+Units: Inches   Conversion:     0'-1"
+Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
+Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
+Specify rotation angle <0>: 0
+Command: IT-START
+Unknown command "IT-START".  Press F1 for help.
+Command: TEXT
+Current text style:  "MtXpl_Arial_Narrow"  Text height:  0'-0 3/32"  Annotative:  No  Justify:  Left
+Specify start point of text or [Justify/Style]:
+Specify height <0'-0 3/32">: 0.09375
+Specify rotation angle of text <0>: 0
+Enter text: DC#17
+Command:
+Devices: 0
+Rows: 0
+Panel height: 1.4375
+Device drop: 1.0
+Row spacing: 3.0
+Panel Type: ; error: bad argument type: stringp nil
