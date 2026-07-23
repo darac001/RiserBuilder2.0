@@ -96,4 +96,14 @@
 (setq *rb-row-chamfer-height* 0.3)
 
 
+;; Devices
 
+(setq *it-device-width* 0.1875) 
+
+(setq *it-device-height* 0.1875)
+
+
+;; Daisy chain settings
+
+(setq *it-daisy-device-spacing* 0.5)
+(setq *it-daisy-loop-spacing* 1.0)

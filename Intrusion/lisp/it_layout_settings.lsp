@@ -98,3 +98,28 @@
 (setq *it-layer-device* "E-SERT-IDS")
 
 (setq *it-layer-text* "E-SERT-IDS-TEXT")
+
+
+
+;; Devices
+
+(setq *it-device-width* 0.21702924) 
+
+(setq *it-device-height* 0.21702924)
+
+
+;; Daisy chain settings
+
+(setq *it-daisy-device-spacing* 0.5)
+(setq *it-daisy-loop-spacing* 1.0)
+
+;; ============================================================
+;; Daisy Chain Settings
+;; ============================================================
+
+;; Panel to first device cable length
+(setq *it-daisy-first-trunk-length* 1.0)
+
+
+;; Device to device cable length
+(setq *it-daisy-device-spacing* 1.0)

@@ -36,6 +36,18 @@
 )
 
 
+(defun get-it-daisy-right-point (insert-point) 
+
+  (list 
+    (+ (car insert-point) 
+       *it-device-width*
+    )
+
+    (cadr insert-point)
+  )
+)
+
+
 ;; ------------------------------------------------------------
 ;; Layout Single Panel
 ;; ------------------------------------------------------------
@@ -334,6 +346,254 @@
     (setq att (entnext att))
   )
 )
+
+
+
+;; ============================================================
+;; Draw Daisy Chain Loop
+;;
+;; Devices are drawn:
+;;
+;; D3 -------- D2 -------- D1 -------- PANEL
+;;
+;; First trunk uses:
+;;   *it-daisy-first-trunk-length*
+;;
+;; Device spacing uses:
+;;   *it-daisy-device-spacing*
+;;
+;; ============================================================
+
+
+(defun it-layout-daisy-loop (panel loop-data base-point / loop-no devices panel-point 
+                             device-point insert-point device block-name wire-tag 
+                             cable first-device
+                            ) 
+
+
+  ;; extract loop information
+
+  (setq loop-no (car loop-data))
+
+
+  (setq devices (cdr loop-data))
+
+
+
+  ;; panel connection point
+
+  (setq panel-point base-point)
+
+
+
+  ;; first device connection point
+
+  (setq device-point (list 
+                       (- (car panel-point) 
+                          *it-daisy-first-trunk-length*
+                       )
+
+                       (cadr panel-point)
+                     )
+  )
+
+
+
+  ;; ------------------------------------------------------------
+  ;; Cable tag
+  ;;
+  ;; Use first device cable
+  ;;
+  ;; ------------------------------------------------------------
+
+  (setq first-device (car devices))
+
+
+  (setq cable (nth 3 first-device))
+
+
+  ;; draw cable leader on first trunk
+
+  (it-draw-leader 
+
+    (list 
+
+      (/ 
+        (+ (car panel-point) 
+           (car device-point)
+        )
+        2.0
+      )
+
+      (cadr panel-point)
+    )
+
+
+    (list 
+
+      (/ 
+        (+ (car panel-point) 
+           (car device-point)
+        )
+        2.0
+      )
+
+      (+ (cadr panel-point) 0.25)
+    )
+
+
+    cable
+  )
+
+
+
+
+  ;; ------------------------------------------------------------
+  ;; Draw devices
+  ;; ------------------------------------------------------------
+
+
+  (foreach device devices 
+
+
+
+    ;; Draw cable segment
+
+    (command "LINE" 
+             panel-point
+             device-point
+             ""
+    )
+
+
+
+    ;; Convert connection point to block insertion point
+
+    (setq insert-point (list 
+
+                         (- (car device-point) 
+                            (/ *it-device-width* 2.0)
+                         )
+
+
+                         (+ (cadr device-point) 
+                            (/ *it-device-height* 2.0)
+                         )
+                       )
+    )
+
+
+
+    ;; block name
+
+    (setq block-name (nth 2 device))
+
+
+    ;; insert device
+
+    (it-insert-device 
+      block-name
+      insert-point
+    )
+
+
+
+    ;; device label
+
+    (it-place-device-id 
+      device
+      insert-point
+    )
+
+
+
+    ;; ------------------------------------------------
+    ;; Move pattern left
+    ;; ------------------------------------------------
+
+    (setq panel-point (list 
+
+                        (- (car device-point) 
+                           *it-device-width*
+                        )
+
+                        (cadr device-point)
+                      )
+    )
+
+
+
+    (setq device-point (list 
+
+                         (- (car panel-point) 
+                            *it-daisy-device-spacing*
+                         )
+
+                         (cadr panel-point)
+                       )
+    )
+  )
+)
+
+;; ============================================================
+;; Draw All Daisy Chain Loops For Panel
+;;
+;; Example:
+;;
+;; Loop 1:
+;; D3 -------- D2 -------- D1 -------- PANEL
+;;
+;; Loop 2:
+;; D5 -------- D4 -------------------- PANEL
+;;
+;; ============================================================
+
+
+(defun it-layout-daisy-loops (panel base-point / devices loops loop row-y) 
+
+
+  ;; get all daisy devices
+
+  (setq devices (get-it-daisy-devices panel))
+
+
+  ;; group by loop number
+
+  (setq loops (get-it-daisy-loops devices))
+
+
+  ;; start first loop at panel connection point
+
+  (setq row-y (cadr base-point))
+
+
+
+  ;; draw every loop
+
+  (foreach loop loops 
+
+
+    (it-layout-daisy-loop 
+
+      panel
+
+      loop
+
+      (list 
+
+        (car base-point)
+
+        row-y
+      )
+    )
+
+
+    ;; move down for next loop
+
+    (setq row-y (- row-y *it-row-spacing*))
+  )
+)
+
 
 
   ;; ------------------------------------------------------------

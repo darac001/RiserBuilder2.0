@@ -139,6 +139,8 @@
     (nth 5 row) ;; Cable
 
     (nth 8 row) ;; Loop type
+
+    (nth 9 row) ;; Loop number
   )
 )
 
