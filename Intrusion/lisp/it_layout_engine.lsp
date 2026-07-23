@@ -12,17 +12,37 @@
 ;; Insert Panel Block
 ;; ------------------------------------------------------------
 
-(defun it-insert-panel (block-name insert-point) 
+(defun it-insert-panel (block-name insert-point / ent) 
+  (rb-set-layer *it-layer-device*)
+  (command "_-INSERT" block-name insert-point 1 1 0 "")
+
+  (setq ent (entlast))
+
+  ent
+)
+
+(defun it-insert-psu (block-name insert-point) 
+
+  (rb-set-layer *it-layer-device*)
+
   (command "_-INSERT" block-name insert-point 1 1 0 "")
 )
 
+(defun rb-set-layer (layer-name) 
+  (if (not (tblsearch "LAYER" layer-name)) 
+    (command "-LAYER" "M" layer-name "")
+  )
+  (setvar "CLAYER" layer-name)
+)
 
 
 ;; ------------------------------------------------------------
 ;; Layout Single Panel
 ;; ------------------------------------------------------------
 
-(defun it-layout-panel (panel base-point cable-data / panel-type block-name) 
+(defun it-layout-panel (panel base-point cable-data / panel-type block-name psu-block 
+                        psu-point panel-entity
+                       ) 
 
   (setq panel-type (nth 1 panel))
 
@@ -33,7 +53,35 @@
   (prompt (strcat "\nBlock Name: " block-name))
 
   ;; insert panel
-  (it-insert-panel block-name base-point)
+  (setq panel-entity (it-insert-panel block-name base-point))
+
+  ;; Insert external PSU if required
+
+  (if (it-panel-requires-psu panel-type) 
+
+    (progn 
+
+      (setq psu-block (get-it-panel-ps-block panel-type))
+
+      (setq psu-point (list 
+                        (+ (car base-point) 
+                           *it-panel-width*
+                           1.0
+                        )
+                        (cadr base-point)
+                      )
+      )
+
+      (it-insert-psu psu-block psu-point)
+    )
+  )
+
+  ;; write panel ID attribute
+  (it-set-attribute 
+    panel-entity
+    "PANEL_ID"
+    (nth 0 panel)
+  )
 
   ;; layout home runs
   (it-layout-home-runs panel base-point cable-data)
@@ -67,8 +115,14 @@
   ;; DRAW EACH DEVICE ROW
 
   (setq row-y y)
+  (setq is-first T)
+
+  (setq row-index 0)
 
   (foreach row device-rows 
+
+    (setq row-index (1+ row-index))
+    (setq panel-bottom (- (cadr base-point) *it-panel-height*))
 
     (setq trunk-start (list 
                         (- panel-left 
@@ -84,7 +138,39 @@
 
     (setq trunk-end (list panel-left row-y))
 
+    (rb-set-layer *it-layer-cable*)
     (command "LINE" trunk-start trunk-end "")
+
+
+    (if (> row-index 1) 
+      (setq offset-x (+ (car trunk-end) 
+                        (* row-index *it-riser-offset-step*)
+                     )
+      )
+      (setq offset-x (car base-point))
+    )
+
+    ;; connect non-first rows upward
+    (if (not is-first) 
+      (progn 
+
+
+        (rb-set-layer *it-layer-cable*)
+        ;; horizontal segment
+        (command "LINE" 
+                 (list (car trunk-end) row-y)
+                 (list offset-x row-y)
+                 ""
+        )
+
+        ;; vertical segment
+        (command "LINE" 
+                 (list offset-x row-y)
+                 (list offset-x panel-bottom)
+                 ""
+        )
+      )
+    )
 
     ;; calculate cable tag for this row
 
@@ -94,21 +180,21 @@
                        cable-data
                      )
     )
-   
+
     (setq wire-counts (count-it-cables row-cables))
- 
+
 
     (setq wire-tag (format-it-cable-tag wire-counts))
 
     (it-draw-leader 
 
       (list 
-        (- (car trunk-end) 0.5)
+        (- (car trunk-end) 1)
         (cadr trunk-end)
       )
 
       (list 
-        (- (car trunk-end) 0.5)
+        (- (car trunk-end) 1)
         (+ (cadr trunk-end) 0.4)
       )
 
@@ -124,7 +210,7 @@
 
 
 
-
+      (rb-set-layer *it-layer-cable*)
       ;; vertical drop
       (command "LINE" 
                (list x row-y)
@@ -183,10 +269,11 @@
 
     ;; move down after completing one row
     (setq row-y (- row-y *it-row-spacing*))
+    (setq is-first nil)
   ) ;; end foreach row
 ) ;; end function
-
 (defun it-insert-device (block-name insert-point) 
+  (rb-set-layer *it-layer-device*)
   (command "_-INSERT" block-name insert-point 1 1 0 "")
 )
 (defun it-place-device-id (device insert-point / label pt) 
@@ -200,16 +287,51 @@
            )
   )
 
+  (rb-set-layer *it-layer-text*)
   (command "TEXT" pt *it-device-id-text-height* 0 label)
 )
 (defun it-draw-leader (wire-point text-point text) 
-
+  (rb-set-layer *it-layer-cable*)
   (command 
     "_MLEADER"
     wire-point
     text-point
     (strcat text "")
     ""
+  )
+)
+
+
+
+(defun it-set-attribute (entity tag value / att) 
+
+  (setq att (entnext entity))
+
+  (while att 
+
+    (if (= "ATTRIB" (cdr (assoc 0 (entget att)))) 
+
+      (if 
+        (= (strcase tag) 
+           (strcase (cdr (assoc 2 (entget att))))
+        )
+
+        (progn 
+
+          (entmod 
+            (subst 
+              (cons 1 value)
+              (assoc 1 (entget att))
+              (entget att)
+            )
+          )
+
+          (entupd att)
+        )
+      )
+    )
+
+    (setq att (entnext att))
   )
 )
 
@@ -240,11 +362,7 @@
     (setq panel-height (it-get-panel-layout-height panel))
 
 
-    (prompt "\nDrawing panel: ")
-    (princ (nth 0 panel))
 
-    (prompt "\nHeight: ")
-    (princ panel-height)
 
 
     ;; draw panel

@@ -15,6 +15,8 @@
 (setq *it-panel-spacing* 7.0)
 
 
+;;horizontal step
+(setq *it-riser-offset-step* 0.1875)
 
 ;; Device spacing
 
@@ -42,7 +44,7 @@
 
 
 ;; horizontal offset from panel to first device
-(setq *it-device-start-offset* 3.0)
+(setq *it-device-start-offset* 2.0)
 
 
 ;; ------------------------------------------------------------
@@ -89,3 +91,10 @@
 (setq *it-wire-tag-offset* 0.25)
 
 (setq *it-leader-text-height* 0.125)
+
+
+(setq *it-layer-cable* "E-SEC-WIRE")
+
+(setq *it-layer-device* "E-SERT-IDS")
+
+(setq *it-layer-text* "E-SERT-IDS-TEXT")
