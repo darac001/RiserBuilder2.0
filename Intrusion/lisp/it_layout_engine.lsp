@@ -8,6 +8,29 @@
 
 
 
+;; Layout State
+;; Keeps track of current riser position
+
+(defun it-create-layout-state (base-point) 
+  (list 
+    (cadr base-point) ;; current y
+    0 ;; row index
+  )
+)
+(defun it-get-state-y (state) 
+  (nth 0 state)
+)
+(defun it-get-state-row (state) 
+  (nth 1 state)
+)
+(defun it-update-layout-state (state y) 
+  (list 
+    y
+    (1+ (nth 1 state))
+  )
+)
+
+
 ;; ------------------------------------------------------------
 ;; Insert Panel Block
 ;; ------------------------------------------------------------
@@ -53,7 +76,7 @@
 ;; ------------------------------------------------------------
 
 (defun it-layout-panel (panel base-point cable-data / panel-type block-name psu-block 
-                        psu-point panel-entity
+                        psu-point panel-entity home-run-devices home-run-rows daisy-y
                        ) 
 
   (setq panel-type (nth 1 panel))
@@ -97,6 +120,41 @@
 
   ;; layout home runs
   (it-layout-home-runs panel base-point cable-data)
+
+
+  (setq home-run-devices (get-it-home-run-devices panel))
+
+  (setq home-run-rows (length 
+                        (split-it-device-rows home-run-devices)
+                      )
+  )
+
+
+  (setq daisy-y (- 
+                  (cadr base-point)
+
+                  (/ *it-panel-height* 2.0)
+
+                  (* home-run-rows *it-row-spacing*)
+                )
+  )
+
+  ;; layout daisy loops
+  (it-layout-daisy-loops 
+
+    panel
+
+    (list 
+
+      (- 
+        (car base-point)
+
+        (/ *it-panel-width* 2.0)
+      )
+
+      daisy-y
+    )
+  )
 )
 
 
@@ -284,10 +342,13 @@
     (setq is-first nil)
   ) ;; end foreach row
 ) ;; end function
+
+
 (defun it-insert-device (block-name insert-point) 
   (rb-set-layer *it-layer-device*)
   (command "_-INSERT" block-name insert-point 1 1 0 "")
 )
+
 (defun it-place-device-id (device insert-point / label pt) 
 
   ;; assume device structure: (... ID TYPE BLOCK ...)
@@ -302,6 +363,8 @@
   (rb-set-layer *it-layer-text*)
   (command "TEXT" pt *it-device-id-text-height* 0 label)
 )
+
+
 (defun it-draw-leader (wire-point text-point text) 
   (rb-set-layer *it-layer-cable*)
   (command 
@@ -374,18 +437,9 @@
   ;; extract loop information
 
   (setq loop-no (car loop-data))
-
-
   (setq devices (cdr loop-data))
-
-
-
   ;; panel connection point
-
   (setq panel-point base-point)
-
-
-
   ;; first device connection point
 
   (setq device-point (list 
@@ -396,39 +450,21 @@
                        (cadr panel-point)
                      )
   )
-
-
-
-  ;; ------------------------------------------------------------
-  ;; Cable tag
-  ;;
-  ;; Use first device cable
-  ;;
-  ;; ------------------------------------------------------------
+  ;; Cable tag Use first device cable
 
   (setq first-device (car devices))
-
-
   (setq cable (nth 3 first-device))
-
-
   ;; draw cable leader on first trunk
-
   (it-draw-leader 
-
     (list 
-
       (/ 
         (+ (car panel-point) 
            (car device-point)
         )
         2.0
       )
-
       (cadr panel-point)
     )
-
-
     (list 
 
       (/ 
@@ -440,23 +476,10 @@
 
       (+ (cadr panel-point) 0.25)
     )
-
-
     cable
   )
-
-
-
-
-  ;; ------------------------------------------------------------
   ;; Draw devices
-  ;; ------------------------------------------------------------
-
-
   (foreach device devices 
-
-
-
     ;; Draw cable segment
 
     (command "LINE" 
@@ -465,39 +488,26 @@
              ""
     )
 
-
-
     ;; Convert connection point to block insertion point
-
     (setq insert-point (list 
 
                          (- (car device-point) 
                             (/ *it-device-width* 2.0)
                          )
 
-
                          (+ (cadr device-point) 
                             (/ *it-device-height* 2.0)
                          )
                        )
     )
-
-
-
     ;; block name
-
     (setq block-name (nth 2 device))
-
-
     ;; insert device
 
     (it-insert-device 
       block-name
       insert-point
     )
-
-
-
     ;; device label
 
     (it-place-device-id 
@@ -505,12 +515,7 @@
       insert-point
     )
 
-
-
-    ;; ------------------------------------------------
     ;; Move pattern left
-    ;; ------------------------------------------------
-
     (setq panel-point (list 
 
                         (- (car device-point) 
@@ -520,8 +525,6 @@
                         (cadr device-point)
                       )
     )
-
-
 
     (setq device-point (list 
 
@@ -535,65 +538,32 @@
   )
 )
 
-;; ============================================================
 ;; Draw All Daisy Chain Loops For Panel
-;;
-;; Example:
-;;
-;; Loop 1:
 ;; D3 -------- D2 -------- D1 -------- PANEL
-;;
-;; Loop 2:
-;; D5 -------- D4 -------------------- PANEL
-;;
-;; ============================================================
-
 
 (defun it-layout-daisy-loops (panel base-point / devices loops loop row-y) 
 
-
   ;; get all daisy devices
-
   (setq devices (get-it-daisy-devices panel))
-
-
   ;; group by loop number
-
   (setq loops (get-it-daisy-loops devices))
-
-
   ;; start first loop at panel connection point
-
   (setq row-y (cadr base-point))
-
-
-
   ;; draw every loop
-
   (foreach loop loops 
-
-
     (it-layout-daisy-loop 
-
       panel
-
       loop
-
       (list 
-
         (car base-point)
-
         row-y
       )
     )
 
-
     ;; move down for next loop
-
     (setq row-y (- row-y *it-row-spacing*))
   )
 )
-
 
 
   ;; ------------------------------------------------------------

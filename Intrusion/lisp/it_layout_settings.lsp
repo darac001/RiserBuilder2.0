@@ -118,8 +118,10 @@
 ;; ============================================================
 
 ;; Panel to first device cable length
-(setq *it-daisy-first-trunk-length* 1.0)
+(setq *it-daisy-first-trunk-length* 1.88998201)
 
 
 ;; Device to device cable length
 (setq *it-daisy-device-spacing* 1.0)
+
+
