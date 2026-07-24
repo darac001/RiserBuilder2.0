@@ -55,6 +55,7 @@
 (defun it-layout-panel (panel base-point cable-data / panel-type block-name psu-block 
                         psu-point panel-entity home-run-devices home-run-rows daisy-y
                        ) 
+  (setq row-index 0)
 
   (setq panel-type (nth 1 panel))
 
@@ -89,11 +90,24 @@
 
   ;; layout home runs
 
-  (it-layout-home-runs 
-    panel
-    base-point
-    cable-data
-  )
+  (princ "*************************************************************************************")
+  (prompt "\nPANEL DEBUG:")
+  (princ (nth 0 panel))
+
+  (prompt "\nPanel raw data:")
+  (princ panel)
+
+(setq row-index
+      (it-layout-home-runs 
+        panel
+        base-point
+        cable-data
+        row-index
+      )
+)
+  (princ "*************************************************************************************")
+  (prompt "\nROW INDEX:")
+  (princ row-index)
 
 
   (setq home-run-devices (get-it-home-run-devices panel))
@@ -106,9 +120,17 @@
   (setq daisy-y (- 
                   (cadr base-point)
                   (/ *it-panel-height* 2.0)
-                  (* home-run-rows *it-row-spacing*)
+                  (* row-index *it-row-spacing*)
                 )
   )
+
+  (princ "*************************************************************************************")
+  (prompt "\n--- Daisy Debug ---")
+  (prompt "\nHome run rows: ")
+  (princ home-run-rows)
+
+  (prompt "\nDaisy start Y: ")
+  (princ daisy-y)
 
   ;; layout daisy loops
   (it-layout-daisy-loops 
@@ -120,6 +142,7 @@
       )
       daisy-y
     )
+    row-index
   )
 )
 
@@ -129,14 +152,15 @@
 ;; Layout Home Runs 
 ;; ------------------------------------------------------------
 
-(defun it-layout-home-runs (panel base-point cable-data / devices device-rows 
-                            panel-left trunk-start trunk-end x y row-y dev-block cable 
-                            wire-point text-point row-cables wire-counts wire-tag row
+(defun it-layout-home-runs (panel base-point cable-data row-index / devices 
+                            device-rows panel-left trunk-start trunk-end x y row-y 
+                            dev-block cable wire-point text-point row-cables 
+                            wire-counts wire-tag row
                            ) 
 
   (setq devices (get-it-home-run-devices panel))
-
   (setq device-rows (split-it-device-rows devices))
+  (setq rows device-rows) ;;
 
   (setq y (- (cadr base-point) (/ *it-panel-height* 2)))
 
@@ -146,15 +170,15 @@
   ;; DRAW EACH DEVICE ROW
   (setq row-y y)
   (setq is-first T)
-  (setq row-index 0)
+
   (foreach row device-rows 
-
+     (princ "*****************")   
+     (princ "*****************")   
+     (princ "row index")   
+     (princ row-index)   
     (setq row-index (1+ row-index))
-    (prompt "\nHOME RUN ROW: ")
-    (princ row-index)
 
-    (prompt "  Y: ")
-    (princ row-y)
+    
     (setq panel-bottom (- (cadr base-point) *it-panel-height*))
     (setq trunk-start (list 
                         (- panel-left 
@@ -281,6 +305,9 @@
 
     (setq is-first nil)
   ) ;; end foreach row
+
+  (setq row-index (length device-rows))
+  row-index
 ) ;; end function
 
 
@@ -375,6 +402,9 @@
 
 
   ;; extract loop information
+  (princ "*************************************************")
+  (prompt "\nEntered it-layout-daisy-loop")
+  (princ loop-data)
 
   (setq loop-no (car loop-data))
   (setq devices (cdr loop-data))
@@ -481,18 +511,37 @@
 ;; Draw All Daisy Chain Loops For Panel
 ;; D3 -------- D2 -------- D1 -------- PANEL
 
-(defun it-layout-daisy-loops (panel base-point / devices loops loop row-y row-index 
-                              offset-x panel-bottom
+(defun it-layout-daisy-loops (panel base-point row-index / devices loops loop row-y 
+                              row-index offset-x panel-bottom
                              ) 
+  (princ "*************************************************************************************")
+  (prompt "\nDaisy loop count: ")
+  (princ (length loops))
+
+  (prompt "\nStarting row index: ")
+  (princ row-index)
 
   ;; get all daisy devices
   (setq devices (get-it-daisy-devices panel))
+  (princ "*************************************************************************************")
+  (prompt "\nDaisy devices raw:")
+  (princ devices)
   ;; group by loop number
   (setq loops (get-it-daisy-loops devices))
+  (princ "*************************************************************************************")
+  (prompt "\nDaisy loops raw:")
+  (princ loops)
   ;; start first loop at panel connection point
   (setq row-y (cadr base-point))
 
-  (setq row-index 0)
+
+  (princ "*************************************************************************************")
+  (prompt "\nAFTER INIT")
+  (princ "\nrow-y = ")
+  (princ row-y)
+
+  (princ "\nrow-index = ")
+  (princ row-index)
 
   (setq panel-bottom (- (cadr base-point) 
                         (/ *it-panel-height* 2.0)
@@ -500,12 +549,9 @@
   )
   ;; draw every loop
   (foreach loop loops 
-
-    (prompt "\nDAISY ROW: ")
-    (princ row-index)
-
-    (prompt "  Y: ")
-    (princ row-y)
+    (princ "*************************************************************************************")
+    (prompt "\nInside foreach loop")
+    (princ loop)
 
     (if (> row-index 0) 
 

@@ -1,3 +1,4 @@
+Specify rotation angle of text <0>: 0
 Enter text: KP#01
 Command: LINE
 Specify first point:
@@ -16,14 +17,7 @@ Specify start point of text or [Justify/Style]:
 Specify height <0'-0 3/32">: 0.09375
 Specify rotation angle of text <0>: 0
 Enter text: KP#02
-Command:
-Devices: 0
-Rows: 0
-Panel height: 1.4375
-Device drop: 1.0
-Row spacing: 3.0
-Panel Type: IDCP_PS
-Block Name: IDCP_FULL_-INSERT Enter block name or [?] <IDS_KP_Alarm_Keypad>: IDCP_FULL
+Command: _-INSERT Enter block name or [?] <IDS_KP_Alarm_Keypad>: IDCP_FULL
 Units: Inches   Conversion:     0'-1"
 Specify insertion point or [Basepoint/Scale/X/Y/Z/Rotate/Explode/REpeat]:
 Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y scale factor <use X scale factor>: 1
@@ -37,9 +31,13 @@ Enter X scale factor, specify opposite corner, or [Corner/XYZ] <1>: 1 Enter Y sc
 Specify rotation angle <0>: 0
 Command: IT-START
 Unknown command "IT-START".  Press F1 for help.
-Command:
-Daisy row index: 0
-Daisy row Y: 11.7188_MLEADER
+Command: *************************************************************************************
+--- Daisy Debug ---
+Home run rows: 0
+Daisy start Y: 11.7188*************************************************************************************
+Daisy loop count: 0
+Starting row index: nil
+DAISY ROW: 0  Y: 11.7188_MLEADER
 Specify leader arrowhead location or [pre enter Text/leader Landing first/Content first/Options] <Options>:
 Specify leader landing location:
 Enter text: B
@@ -267,8 +265,7 @@ Specify height <0'-0 3/32">: 0.09375
 Specify rotation angle of text <0>: 0
 Enter text: DC#13
 Command:
-Daisy row index: 1
-Daisy row Y: 8.71875LINE
+DAISY ROW: 1  Y: 8.71875LINE
 Specify first point:
 Specify next point or [Undo]:
 Specify next point or [Undo]:
@@ -317,8 +314,7 @@ Specify height <0'-0 3/32">: 0.09375
 Specify rotation angle of text <0>: 0
 Enter text: DC#15
 Command:
-Daisy row index: 2
-Daisy row Y: 5.71875LINE
+DAISY ROW: 2  Y: 5.71875LINE
 Specify first point:
 Specify next point or [Undo]:
 Specify next point or [Undo]:
@@ -367,9 +363,4 @@ Specify height <0'-0 3/32">: 0.09375
 Specify rotation angle of text <0>: 0
 Enter text: DC#17
 Command:
-Devices: 0
-Rows: 0
-Panel height: 1.4375
-Device drop: 1.0
-Row spacing: 3.0
-Panel Type: ; error: bad argument type: stringp nil
+Intrusion riser complete.
