@@ -94,21 +94,6 @@
 
   (setq device-rows (split-it-device-rows devices))
 
-  (prompt "\nDevices: ")
-  (princ (length devices))
-
-  (prompt "\nRows: ")
-  (princ (length device-rows))
-
-  (prompt "\nPanel height: ")
-  (princ *it-panel-height*)
-
-  (prompt "\nDevice drop: ")
-  (princ *it-device-drop*)
-
-  (prompt "\nRow spacing: ")
-  (princ *it-row-spacing*)
-
   ;; temporary calculation without panel-gap
   (+ 
     *it-panel-height*
@@ -121,30 +106,6 @@
 )
 
 
-
-(defun c:TEST-IT-LOOPS (/ panel) 
-
-
-  (prompt "\n--- Testing Loop Separation ---")
-
-
-  (setq panel (car *test-it-model*))
-
-
-  (prompt "\n\nHome Run Devices:")
-  (princ 
-    (get-it-home-run-devices panel)
-  )
-
-
-  (prompt "\n\nDaisy Chain Devices:")
-  (princ 
-    (get-it-daisy-chain-devices panel)
-  )
-
-
-  (princ)
-)
 
 
 (defun get-it-daisy-devices (panel / devices result device) 
@@ -317,119 +278,3 @@
   (reverse loops)
 )
 
-
-(defun c:TEST-IT-PANEL-HEIGHT (/ model panel) 
-
-  (setq model (build-it-data-model *it-input-data*))
-
-  (foreach panel model 
-
-    (prompt "\nPanel: ")
-    (princ (nth 0 panel))
-
-    (prompt "\nRows: ")
-    (princ 
-      (length 
-        (split-it-device-rows 
-          (get-it-home-run-devices panel)
-        )
-      )
-    )
-
-    (prompt "\nHeight: ")
-    (princ 
-      (it-get-panel-layout-height panel)
-    )
-  )
-
-  (princ)
-)
-
-
-
-(defun c:TEST-IT-DAISY (/ panel) 
-
-  (setq panel (cadr *it-model*))
-
-  (princ 
-    (get-it-daisy-loops panel)
-  )
-
-  (princ)
-)
-
-
-
-
-(defun c:TEST-IT-DAISY-CABLE (/ panel devices loops cable) 
-
-
-  (prompt "\n--- TEST IT DAISY CABLE ---")
-
-
-  ;; get first panel
-  (setq panel (car *it-model*))
-
-
-  ;; get devices
-  (setq devices (nth 3 panel))
-
-
-  ;; temporary test:
-  ;; manually use first 2 daisy devices
-
-  (setq loops (list 
-                (nth 0 devices)
-                (nth 1 devices)
-              )
-  )
-
-
-  (prompt "\nLoop devices:")
-  (princ loops)
-
-
-  (setq cable (get-it-daisy-cable loops))
-
-
-  (prompt "\nDaisy cable:")
-  (princ cable)
-
-
-  (prompt "\n--- TEST COMPLETE ---")
-
-  (princ)
-)
-
-
-
-(defun c:TEST-IT-DAISY-LOOPS (/ panel devices loops) 
-
-
-  (prompt "\n--- TEST IT DAISY LOOPS ---")
-
-
-  ;; second panel in your dataset
-  ;; because it contains Daisy Chain
-
-  (setq panel (cadr *it-model*))
-
-
-  (setq devices (nth 3 panel))
-
-
-  (prompt "\nPanel:")
-  (princ (nth 0 panel))
-
-
-  (setq loops (get-it-daisy-loops devices))
-
-
-  (prompt "\n\nDaisy loops:")
-  (princ loops)
-
-
-  (prompt "\n--- TEST COMPLETE ---")
-
-  (princ)
-)

@@ -8,29 +8,6 @@
 
 
 
-;; Layout State
-;; Keeps track of current riser position
-
-(defun it-create-layout-state (base-point) 
-  (list 
-    (cadr base-point) ;; current y
-    0 ;; row index
-  )
-)
-(defun it-get-state-y (state) 
-  (nth 0 state)
-)
-(defun it-get-state-row (state) 
-  (nth 1 state)
-)
-(defun it-update-layout-state (state y) 
-  (list 
-    y
-    (1+ (nth 1 state))
-  )
-)
-
-
 ;; ------------------------------------------------------------
 ;; Insert Panel Block
 ;; ------------------------------------------------------------
@@ -81,23 +58,16 @@
 
   (setq panel-type (nth 1 panel))
 
-  (prompt (strcat "\nPanel Type: " panel-type))
-
   (setq block-name (get-it-panel-block panel-type))
-
-  (prompt (strcat "\nBlock Name: " block-name))
 
   ;; insert panel
   (setq panel-entity (it-insert-panel block-name base-point))
 
   ;; Insert external PSU if required
-
   (if (it-panel-requires-psu panel-type) 
 
     (progn 
-
       (setq psu-block (get-it-panel-ps-block panel-type))
-
       (setq psu-point (list 
                         (+ (car base-point) 
                            *it-panel-width*
@@ -106,11 +76,9 @@
                         (cadr base-point)
                       )
       )
-
       (it-insert-psu psu-block psu-point)
     )
   )
-
   ;; write panel ID attribute
   (it-set-attribute 
     panel-entity
@@ -118,22 +86,14 @@
     (nth 0 panel)
   )
 
-  ;; create shared layout state
-
-  (setq layout-state (it-create-layout-state base-point))
-
 
   ;; layout home runs
 
-  (setq layout-state (it-layout-home-runs 
-                       panel
-                       base-point
-                       cable-data
-                       layout-state
-                     )
+  (it-layout-home-runs 
+    panel
+    base-point
+    cable-data
   )
-
-
 
 
   (setq home-run-devices (get-it-home-run-devices panel))
@@ -160,7 +120,6 @@
       )
       daisy-y
     )
-    layout-state
   )
 )
 
@@ -170,40 +129,33 @@
 ;; Layout Home Runs 
 ;; ------------------------------------------------------------
 
-(defun it-layout-home-runs (panel base-point cable-data layout-state / devices 
-                            device-rows panel-left trunk-start trunk-end x y row-y 
-                            dev-block cable wire-point text-point row-cables 
-                            wire-counts wire-tag row
+(defun it-layout-home-runs (panel base-point cable-data / devices device-rows 
+                            panel-left trunk-start trunk-end x y row-y dev-block cable 
+                            wire-point text-point row-cables wire-counts wire-tag row
                            ) 
 
   (setq devices (get-it-home-run-devices panel))
 
   (setq device-rows (split-it-device-rows devices))
 
-
   (setq y (- (cadr base-point) (/ *it-panel-height* 2)))
 
   ;; LEFT EDGE OF PANEL
   (setq panel-left (- (car base-point) (/ *it-panel-width* 2.0)))
 
-
-
-
-
   ;; DRAW EACH DEVICE ROW
-
   (setq row-y y)
   (setq is-first T)
-
-
-
+  (setq row-index 0)
   (foreach row device-rows 
 
+    (setq row-index (1+ row-index))
+    (prompt "\nHOME RUN ROW: ")
+    (princ row-index)
 
-
-    (setq row-index (1+ (it-get-state-row layout-state)))
+    (prompt "  Y: ")
+    (princ row-y)
     (setq panel-bottom (- (cadr base-point) *it-panel-height*))
-
     (setq trunk-start (list 
                         (- panel-left 
                            (+ *it-device-start-offset* 
@@ -215,13 +167,9 @@
                         row-y
                       )
     )
-
     (setq trunk-end (list panel-left row-y))
-
     (rb-set-layer *it-layer-cable*)
     (command "LINE" trunk-start trunk-end "")
-
-
     (if (> row-index 1) 
       (setq offset-x (+ (car trunk-end) 
                         (* row-index *it-riser-offset-step*)
@@ -229,11 +177,9 @@
       )
       (setq offset-x (car base-point))
     )
-
     ;; connect non-first rows upward
     (if (not is-first) 
       (progn 
-
 
         (rb-set-layer *it-layer-cable*)
         ;; horizontal segment
@@ -242,7 +188,6 @@
                  (list offset-x row-y)
                  ""
         )
-
         ;; vertical segment
         (command "LINE" 
                  (list offset-x row-y)
@@ -251,23 +196,16 @@
         )
       )
     )
-
     ;; calculate cable tag for this row
-
     (setq row-cables (get-it-row-cables 
                        (nth 0 panel)
                        row
                        cable-data
                      )
     )
-
     (setq wire-counts (count-it-cables row-cables))
-
-
     (setq wire-tag (format-it-cable-tag wire-counts))
-
     (it-draw-leader 
-
       (list 
         (- (car trunk-end) 1)
         (cadr trunk-end)
@@ -285,10 +223,7 @@
     (setq x (car trunk-start))
 
     (foreach device row 
-
       (setq dev-block (nth 2 device))
-
-
 
       (rb-set-layer *it-layer-cable*)
       ;; vertical drop
@@ -297,8 +232,6 @@
                (list x (- row-y *it-device-drop*))
                ""
       )
-
-
 
       ;; insert device
       (it-insert-device 
@@ -319,7 +252,6 @@
                   )
       )
 
-
       ;; leader halfway down drop
       (setq wire-point (list 
                          x
@@ -327,20 +259,16 @@
                        )
       )
 
-
       (setq text-point (list 
                          (+ x *it-wire-tag-offset*)
                          (- row-y (/ *it-device-drop* 2.0))
                        )
       )
-
-
       (it-draw-leader 
         wire-point
         text-point
         cable
       )
-
 
       ;; move RIGHT toward panel
       (setq x (+ x *it-device-spacing*))
@@ -350,14 +278,9 @@
     ;; move down after completing one row
     (setq row-y (- row-y *it-row-spacing*))
 
-    (setq layout-state (list 
-                         row-y
-                         row-index
-                       )
-    )
+
     (setq is-first nil)
   ) ;; end foreach row
-  layout-state
 ) ;; end function
 
 
@@ -558,8 +481,8 @@
 ;; Draw All Daisy Chain Loops For Panel
 ;; D3 -------- D2 -------- D1 -------- PANEL
 
-(defun it-layout-daisy-loops (panel base-point layout-state / devices loops loop 
-                              row-y row-index offset-x panel-bottom
+(defun it-layout-daisy-loops (panel base-point / devices loops loop row-y row-index 
+                              offset-x panel-bottom
                              ) 
 
   ;; get all daisy devices
@@ -569,9 +492,7 @@
   ;; start first loop at panel connection point
   (setq row-y (cadr base-point))
 
-  (setq row-index (it-get-state-row layout-state))
-
-
+  (setq row-index 0)
 
   (setq panel-bottom (- (cadr base-point) 
                         (/ *it-panel-height* 2.0)
@@ -580,18 +501,11 @@
   ;; draw every loop
   (foreach loop loops 
 
-
-    (prompt "\nDaisy row index: ")
+    (prompt "\nDAISY ROW: ")
     (princ row-index)
 
-    (prompt "\nDaisy row Y: ")
+    (prompt "  Y: ")
     (princ row-y)
-    ;; ------------------------------------------------
-    ;; Connect this row back to panel
-    ;;
-    ;; Row 0 = directly connected
-    ;; Other rows need riser connection
-    ;; ------------------------------------------------
 
     (if (> row-index 0) 
 
@@ -636,7 +550,6 @@
     (setq row-y (- row-y *it-row-spacing*))
     (setq row-index (1+ row-index))
   )
-  (list row-y row-index)
 )
 
 
@@ -647,26 +560,18 @@
 
   (prompt "\n--- Drawing Intrusion Riser ---")
 
-
-
   ;; Disable osnap
   (setq old-osnap (getvar "OSMODE"))
   (setvar "OSMODE" 0)
 
   ;; Starting Y position
   (setq y 0)
-
-
   (setq y 0)
-
 
   (foreach panel system-data 
 
     ;; calculate current panel height
     (setq panel-height (it-get-panel-layout-height panel))
-
-
-
 
 
     ;; draw panel
