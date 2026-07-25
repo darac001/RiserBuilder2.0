@@ -30,9 +30,7 @@
 
 
 
-;; Daisy chain row spacing
 
-(setq *it-row-gap* 3.0)
 
 
 ;; ------------------------------------------------------------
@@ -48,18 +46,14 @@
 
 
 ;; ------------------------------------------------------------
-;; Row spacing (future use for daisy chain)
+;; Row spacing
 ;; ------------------------------------------------------------
 
-(setq *it-row-spacing* 3.0)
-
-(setq *it-row-gap* 0.5)
-
-(setq *it-row-x-step* 0.3)
+(setq *it-row-spacing* 2.5)
 
 
 ;; ------------------------------------------------------------
-;; Label settings (future use)
+;; Label settings
 ;; ------------------------------------------------------------
 
 (setq *it-device-id-offset* 0.1)

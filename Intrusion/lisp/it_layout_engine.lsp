@@ -180,10 +180,7 @@
   (setq is-first T)
 
   (foreach row device-rows 
-    (princ "*****************")
-    (princ "*****************")
-    (princ "row index")
-    (princ row-index)
+
     (setq row-index (1+ row-index))
 
 
@@ -410,9 +407,6 @@
 
 
   ;; extract loop information
-  (princ "*************************************************")
-  (prompt "\nEntered it-layout-daisy-loop")
-  (princ loop-data)
 
   (setq loop-no (car loop-data))
   (setq devices (cdr loop-data))
@@ -523,34 +517,19 @@
 (defun it-layout-daisy-loops (panel base-point row-index / devices loops loop row-y 
                               row-index offset-x panel-bottom
                              ) 
-  (princ "*************************************************************************************")
-  (prompt "\nDaisy loop count: ")
-  (princ (length loops))
 
-  (prompt "\nStarting row index: ")
-  (princ row-index)
+
+
 
   ;; get all daisy devices
   (setq devices (get-it-daisy-devices panel))
-  (princ "*************************************************************************************")
-  (prompt "\nDaisy devices raw:")
-  (princ devices)
+
   ;; group by loop number
   (setq loops (get-it-daisy-loops devices))
-  (princ "*************************************************************************************")
-  (prompt "\nDaisy loops raw:")
-  (princ loops)
+
   ;; start first loop at panel connection point
   (setq row-y (cadr base-point))
 
-
-  (princ "*************************************************************************************")
-  (prompt "\nAFTER INIT")
-  (princ "\nrow-y = ")
-  (princ row-y)
-
-  (princ "\nrow-index = ")
-  (princ row-index)
 
   (setq panel-bottom (- (cadr base-point) 
                         (/ *it-panel-height* 2.0)
@@ -558,9 +537,6 @@
   )
   ;; draw every loop
   (foreach loop loops 
-    (princ "*************************************************************************************")
-    (prompt "\nInside foreach loop")
-    (princ loop)
 
     (if (> row-index 0) 
 
@@ -612,9 +588,6 @@
                          ) 
 
   (setq keypads (get-it-keypad-devices panel))
-
-  (prompt "\nKeypads to draw: ")
-  (princ (length keypads))
 
 
   ;; starting point at panel
