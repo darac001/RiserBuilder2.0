@@ -88,18 +88,31 @@
 ;;
 ;; ============================================================
 
-(defun it-get-panel-layout-height (panel / devices device-rows) 
+(defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows)
 
-  (setq devices (get-it-home-run-devices panel))
+  ;; Home run rows
+  (setq home-devices (get-it-home-run-devices panel))
+  (setq home-rows (length (split-it-device-rows home-devices)))
 
-  (setq device-rows (split-it-device-rows devices))
 
-  ;; temporary calculation without panel-gap
+  ;; Daisy chain rows
+  (setq daisy-devices (get-it-daisy-devices panel))
+  (setq daisy-loops (length (get-it-daisy-loops daisy-devices)))
+
+
+  ;; Total rows below panel
+  (setq total-rows (+ home-rows daisy-loops))
+
+
   (+ 
     *it-panel-height*
+
+    ;; drop below panel
     *it-device-drop*
+
+    ;; spacing between rows
     (* 
-      (- (length device-rows) 1)
+      (max 0 (- total-rows 1))
       *it-row-spacing*
     )
   )
@@ -277,4 +290,18 @@
 
   (reverse loops)
 )
+
+
+
+(defun get-it-keypad-devices (panel / devices)
+  (setq devices (nth 3 panel)) ;; ✅ correct index
+
+  (vl-remove-if-not
+    '(lambda (d)
+       (= (strcase (nth 1 d)) "KP") ;; device type
+     )
+    devices
+  )
+)
+
 

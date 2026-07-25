@@ -53,9 +53,12 @@
 ;; ------------------------------------------------------------
 
 (defun it-layout-panel (panel base-point cable-data / panel-type block-name psu-block 
-                        psu-point panel-entity home-run-devices home-run-rows daisy-y
+                        psu-point panel-entity home-run-devices home-run-rows daisy-y 
+                        keypad-y keypad-devices
                        ) 
   (setq row-index 0)
+
+
 
   (setq panel-type (nth 1 panel))
 
@@ -65,18 +68,22 @@
   (setq panel-entity (it-insert-panel block-name base-point))
 
   ;; Insert external PSU if required
+  ;; Insert external PSU if required
   (if (it-panel-requires-psu panel-type) 
 
     (progn 
       (setq psu-block (get-it-panel-ps-block panel-type))
+
+      ;; PSU above panel
       (setq psu-point (list 
-                        (+ (car base-point) 
-                           *it-panel-width*
+                        (car base-point)
+                        (+ (cadr base-point) 
+                           *it-panel-height*
                            1.0
                         )
-                        (cadr base-point)
                       )
       )
+
       (it-insert-psu psu-block psu-point)
     )
   )
@@ -90,25 +97,21 @@
 
   ;; layout home runs
 
-  (princ "*************************************************************************************")
-  (prompt "\nPANEL DEBUG:")
-  (princ (nth 0 panel))
+  (setq row-index (it-layout-home-runs 
+                    panel
+                    base-point
+                    cable-data
+                    row-index
+                  )
+  )
 
-  (prompt "\nPanel raw data:")
-  (princ panel)
+  (setq keypad-devices (get-it-keypad-devices panel))
 
-(setq row-index
-      (it-layout-home-runs 
-        panel
-        base-point
-        cable-data
-        row-index
-      )
-)
-  (princ "*************************************************************************************")
-  (prompt "\nROW INDEX:")
-  (princ row-index)
-
+  (setq keypad-y (- 
+                   (cadr base-point)
+                   (/ *it-panel-height* 2.0)
+                 )
+  )
 
   (setq home-run-devices (get-it-home-run-devices panel))
 
@@ -124,13 +127,6 @@
                 )
   )
 
-  (princ "*************************************************************************************")
-  (prompt "\n--- Daisy Debug ---")
-  (prompt "\nHome run rows: ")
-  (princ home-run-rows)
-
-  (prompt "\nDaisy start Y: ")
-  (princ daisy-y)
 
   ;; layout daisy loops
   (it-layout-daisy-loops 
@@ -143,6 +139,18 @@
       daisy-y
     )
     row-index
+  )
+
+
+  (it-layout-keypads 
+    panel
+    (list 
+      (+ 
+        (car base-point)
+        (/ *it-panel-width* 2.0)
+      )
+      keypad-y
+    )
   )
 )
 
@@ -172,13 +180,13 @@
   (setq is-first T)
 
   (foreach row device-rows 
-     (princ "*****************")   
-     (princ "*****************")   
-     (princ "row index")   
-     (princ row-index)   
+    (princ "*****************")
+    (princ "*****************")
+    (princ "row index")
+    (princ row-index)
     (setq row-index (1+ row-index))
 
-    
+
     (setq panel-bottom (- (cadr base-point) *it-panel-height*))
     (setq trunk-start (list 
                         (- panel-left 
@@ -452,6 +460,7 @@
   (foreach device devices 
     ;; Draw cable segment
 
+    (rb-set-layer *it-layer-cable*)
     (command "LINE" 
              panel-point
              device-point
@@ -595,6 +604,118 @@
     ;; move down for next loop
     (setq row-y (- row-y *it-row-spacing*))
     (setq row-index (1+ row-index))
+  )
+)
+
+(defun it-layout-keypads (panel base-point / keypads panel-point device-point device 
+                          block-name insert-point
+                         ) 
+
+  (setq keypads (get-it-keypad-devices panel))
+
+  (prompt "\nKeypads to draw: ")
+  (princ (length keypads))
+
+
+  ;; starting point at panel
+  (setq panel-point base-point)
+
+
+  ;; first keypad connection point
+  (setq device-point (list 
+                       (+ (car panel-point) *it-daisy-first-trunk-length*)
+                       (cadr panel-point)
+                     )
+  )
+
+
+  ;; ------------------------------------------------------------
+  ;; Cable leader for first keypad trunk
+  ;; ------------------------------------------------------------
+
+  (it-draw-leader 
+
+    ;; arrow point (middle of cable)
+    (list 
+      (/ 
+        (+ (car panel-point) 
+           (car device-point)
+        )
+        2.0
+      )
+      (cadr panel-point)
+    )
+
+    ;; text location
+    (list 
+      (/ 
+        (+ (car panel-point) 
+           (car device-point)
+        )
+        2.0
+      )
+      (+ (cadr panel-point) 0.25)
+    )
+
+    ;; cable type from first keypad
+    (nth 3 (car keypads))
+  )
+
+
+  (foreach device keypads 
+
+    ;; Draw cable segment
+    (rb-set-layer *it-layer-cable*)
+
+    (command "LINE" 
+             panel-point
+             device-point
+             ""
+    )
+
+
+    ;; block name
+    (setq block-name (nth 2 device))
+
+
+    ;; convert connection point to block insertion point
+    (setq insert-point (list 
+                         (- (car device-point) 
+                            (/ *it-device-width* 2.0)
+                         )
+
+                         (+ (cadr device-point) 
+                            (/ *it-device-height* 2.0)
+                         )
+                       )
+    )
+
+
+    ;; insert keypad
+    (it-insert-device 
+      block-name
+      insert-point
+    )
+
+
+    ;; keypad ID
+    (it-place-device-id 
+      device
+      insert-point
+    )
+
+
+    ;; move current point to next keypad
+    (setq panel-point device-point)
+
+
+    (setq device-point (list 
+                         (+ (car device-point) 
+                            *it-daisy-device-spacing*
+                         )
+                         (cadr device-point)
+                       )
+    )
   )
 )
 

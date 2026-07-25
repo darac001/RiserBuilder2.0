@@ -110,8 +110,6 @@
 
 ;; Daisy chain settings
 
-(setq *it-daisy-device-spacing* 0.5)
-(setq *it-daisy-loop-spacing* 1.0)
 
 ;; ============================================================
 ;; Daisy Chain Settings
