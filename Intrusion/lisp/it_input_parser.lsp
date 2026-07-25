@@ -171,7 +171,11 @@
 
 (defun it-load-input (/ filename) 
 
-  (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/it_input2.csv")
+  ; (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/it_input.csv")
+  ; (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/it_input2.csv")
+  ; (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/it_input3.csv")
+  ; (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/ac_input.csv")
+  (setq filename "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion/ac_input2.csv")
 
 
   (setq *it-input-lines* (read-csv filename))

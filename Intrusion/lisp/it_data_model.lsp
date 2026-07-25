@@ -1,35 +1,55 @@
 ;; ============================================================
-;; Intrusion Riser Data Model Builder
+;; Intrusion Riser Data Model
 ;;
-;; Converts parsed CSV data into structured panel/device model.
+;; Purpose:
+;;   Converts parsed CSV input into structured data objects
+;;   used by the intrusion riser layout engine.
+;;
+;; Main responsibilities:
+;;   - Group devices by panel
+;;   - Create panel data structures
+;;   - Create device data structures
+;;   - Build cable lookup information
+;;   - Provide cable filtering and formatting utilities
+;;
+;; Input:
+;;   Raw CSV rows from intrusion input file
+;;
+;; Panel structure:
+;;
+;;   (
+;;     Panel ID
+;;     Panel Type
+;;     Panel Block Name
+;;     Devices
+;;   )
+;;
+;; Device structure:
+;;
+;;   (
+;;     Device ID
+;;     Device Type
+;;     Device Block Name
+;;     Cable
+;;     Loop Type
+;;     Loop Number
+;;   )
+;;
+;; Cable structure:
+;;
+;;   (
+;;     Panel ID
+;;     Device ID
+;;     Cable
+;;     Loop Type
+;;   )
+;;
+;; Main builder:
+;;   build-it-data-model
 ;;
 ;; ============================================================
 
 
-
-;; Finds an existing intrusion panel.
-;;
-;; Panel structure:
-;;
-;; (
-;;   Panel ID
-;;   Panel Type
-;;   Panel Block
-;;   Devices
-;; )
-;;
-;; Example:
-;;
-;; (
-;;  "ACP-01"
-;;  "IDCP"
-;;  "IDCP_FULL"
-;;  (
-;;    device1
-;;    device2
-;;  )
-;; )
-;;
 
 (defun find-it-panel (panel-id panels) 
 
@@ -106,25 +126,6 @@
 
 
 ;; Creates one intrusion device entry.
-;;
-;; CSV:
-;;
-;; Device ID
-;; Devices
-;; Device Block Name
-;; Cable
-;; Loop Type
-;;
-;; Model:
-;;
-;; (
-;; Device ID
-;; Acronym
-;; Block
-;; Cable
-;; Loop Type
-;; )
-;;
 
 (defun create-it-device (row) 
 
@@ -224,17 +225,9 @@
 
 
 
-;; ============================================================
+
 ;; Intrusion Cable Data Model
-;;
 ;; Builds cable information from input CSV
-;;
-;; ============================================================
-
-
-
-;; ------------------------------------------------------------
-;; Build Cable Model
 ;;
 ;; Structure:
 ;;
@@ -272,10 +265,8 @@
 
 
 
-;; ------------------------------------------------------------
-;; Get all cables for a panel
-;; ------------------------------------------------------------
 
+;; Get all cables for a panel
 (defun get-it-panel-cables (panel-id cable-data / result item) 
 
   (setq result '())
@@ -295,9 +286,8 @@
 
 
 
-;; ------------------------------------------------------------
+
 ;; Get cable for one device
-;; ------------------------------------------------------------
 
 (defun get-it-device-cable (panel-id device-id cable-data / result item) 
 
@@ -321,7 +311,7 @@
 )
 
 
-;; ------------------------------------------------------------
+
 ;; Get cables for a device row
 ;;
 ;; Input:
@@ -331,8 +321,7 @@
 ;;
 ;; Returns:
 ;;   cable entries belonging to devices in this row
-;;
-;; ------------------------------------------------------------
+
 
 (defun get-it-row-cables (panel-id row-devices cable-data / result device item)
 
@@ -359,14 +348,11 @@
 )
 
 
-;; ------------------------------------------------------------
+
 ;; Count cable quantities
-;;
 ;; Example:
 ;;
 ;; ((B . 2) (C . 3))
-;;
-;; ------------------------------------------------------------
 
 (defun count-it-cables (cable-data / counts item parts cable qty part) 
 
@@ -418,16 +404,12 @@
 
 
 
-;; ------------------------------------------------------------
+
 ;; Format cable tag
-;;
 ;; Example:
 ;; ((B . 2) (C . 3))
-;;
 ;; Output:
 ;; 2B,3C
-;;
-;; ------------------------------------------------------------
 
 (defun format-it-cable-tag (counts / result sorted item) 
 
@@ -439,9 +421,7 @@
                )
   )
 
-
   (setq result "")
-
 
   (foreach item sorted 
 
@@ -461,6 +441,7 @@
   result
 )
 
+;; Get home-run cable entries for a panel
 (defun get-it-home-run-cables (panel-id cable-data / result item) 
 
   (setq result '())

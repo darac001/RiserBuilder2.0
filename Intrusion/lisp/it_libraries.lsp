@@ -6,7 +6,7 @@
 ;; ============================================================
 
 
-(setq *it-device-library* nil)
+; (setq *it-device-library* nil)
 (setq *it-panel-library* nil)
 
 ; temp
@@ -16,26 +16,26 @@
 ;; Load Device Library
 ;; ------------------------------------------------------------
 
-(defun it-load-device-library (/ file rows) 
+; (defun it-load-device-library (/ file rows) 
 
-  (setq file (strcat 
-               *it-project-folder*
-               "\\libraries\\it_device_library.csv"
-             )
-  )
-
-
-  (setq rows (parse-csv 
-               (read-csv file)
-             )
-  )
+;   (setq file (strcat 
+;                *it-project-folder*
+;                "\\libraries\\it_device_library.csv"
+;              )
+;   )
 
 
-  (setq *it-device-library* rows)
+;   (setq rows (parse-csv 
+;                (read-csv file)
+;              )
+;   )
 
 
-  (prompt "\nIntrusion device library loaded.")
-)
+;   (setq *it-device-library* rows)
+
+
+;   (prompt "\nIntrusion device library loaded.")
+; )
 
 
 
@@ -77,22 +77,22 @@
 ;;
 ;; ------------------------------------------------------------
 
-(defun get-it-device-block (acronym / item) 
+; (defun get-it-device-block (acronym / item) 
 
-  (setq item nil)
-
-
-  (foreach row *it-device-library* 
-
-    (if (= acronym (nth 0 row)) 
-
-      (setq item (nth 1 row))
-    )
-  )
+;   (setq item nil)
 
 
-  item
-)
+;   (foreach row *it-device-library* 
+
+;     (if (= acronym (nth 0 row)) 
+
+;       (setq item (nth 1 row))
+;     )
+;   )
+
+
+;   item
+; )
 
 
 

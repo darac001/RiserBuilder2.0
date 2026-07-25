@@ -1,15 +1,36 @@
 ;; ============================================================
 ;; Intrusion Data Model Helper Functions
+;;
+;; Purpose:
+;;   Provides filtering and grouping functions used by the
+;;   intrusion riser layout engine.
+;;
+;; Functions:
+;;   - Filter devices by loop type
+;;   - Split devices into drawing rows
+;;   - Calculate required panel height
+;;   - Group daisy-chain devices by loop number
+;;   - Retrieve keypad devices
+;;
+;; Device structure:
+;;
+;;   (
+;;     Device ID
+;;     Device Type
+;;     Block Name
+;;     Cable
+;;     Loop Type
+;;     Loop Number
+;;   )
+;;
 ;; ============================================================
 
 
-;; Returns only home run devices from a panel
+;; Return home-run devices from panel
 
 (defun get-it-home-run-devices (panel / result device) 
 
-
   (setq result '())
-
 
   (foreach device (nth 3 panel) 
 
@@ -19,19 +40,16 @@
     )
   )
 
-
   (reverse result)
 )
 
 
 
-;; Returns only daisy chain devices from a panel
+;; Return daisy-chain devices from panel
 
 (defun get-it-daisy-chain-devices (panel / result device) 
 
-
   (setq result '())
-
 
   (foreach device (nth 3 panel) 
 
@@ -41,12 +59,11 @@
     )
   )
 
-
   (reverse result)
 )
 
 
-
+;; Split devices into drawing rows based on device limit
 (defun split-it-device-rows (devices / rows row count) 
 
   (setq rows '())
@@ -77,7 +94,6 @@
   rows
 )
 
-;; ============================================================
 ;; Calculate panel layout height
 ;;
 ;; Determines vertical space needed for a panel based on:
@@ -85,8 +101,7 @@
 ;; - row spacing
 ;; - device drop
 ;; - panel height
-;;
-;; ============================================================
+
 
 (defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows)
 
@@ -140,20 +155,18 @@
   (reverse result)
 )
 
+;; Split devices into drawing rows based on device limit
 (defun get-it-daisy-loops (panel / devices loops device loop-no existing) 
 
   (setq devices (get-it-daisy-devices panel))
 
   (setq loops '())
 
-
   (foreach device devices 
 
     (setq loop-no (nth 5 device))
 
-
     (setq existing (assoc loop-no loops))
-
 
     (if existing 
 
@@ -168,8 +181,6 @@
                     loops
                   )
       )
-
-
       ;; create new loop
       (setq loops (cons 
                     (cons loop-no 
@@ -180,13 +191,11 @@
       )
     )
   )
-
-
   (reverse loops)
 )
 
-;; ------------------------------------------------------------
-;; Get Daisy Chain Cable Type
+
+;; Get Daisy Chain Cable Type (needs only 1st device)
 ;;
 ;; Input:
 ;;   loop-devices
@@ -199,8 +208,7 @@
 ;;
 ;; Returns:
 ;;   "B"
-;;
-;; ------------------------------------------------------------
+
 
 (defun get-it-daisy-cable (loop-devices / device) 
 
@@ -214,7 +222,6 @@
   )
 )
 
-;; ------------------------------------------------------------
 ;; Get Daisy Chain Loops
 ;;
 ;; Input:
@@ -225,43 +232,26 @@
 ;;   (loop-no device device device)
 ;;   (loop-no device device)
 ;; )
-;;
-;; Example:
-;;
-;; (
-;;   (1 DC#01 DC#02 DC#03)
-;;   (2 DC#04 DC#05)
-;; )
-;;
-;; ------------------------------------------------------------
+
 
 (defun get-it-daisy-loops (devices / loops device loop-no existing) 
 
-
   (setq loops '())
-
-
   (foreach device devices 
-
-
     ;; only Daisy Chain devices
 
     (if (= (nth 4 device) "Daisy_Chain") 
-
 
       (progn 
 
         ;; loop number
         (setq loop-no (nth 5 device))
 
-
         ;; check if loop already exists
 
         (setq existing (assoc loop-no loops))
 
-
         (if existing 
-
 
           ;; add device to existing loop
 
@@ -271,7 +261,6 @@
                         loops
                       )
           )
-
 
           ;; create new loop
 
@@ -284,21 +273,18 @@
       )
     )
   )
-
-
   ;; preserve order
-
   (reverse loops)
 )
 
 
-
+;; Return keypad devices from panel
 (defun get-it-keypad-devices (panel / devices)
-  (setq devices (nth 3 panel)) ;; ✅ correct index
+  (setq devices (nth 3 panel)) ;; 
 
   (vl-remove-if-not
     '(lambda (d)
-       (= (strcase (nth 1 d)) "KP") ;; device type
+       (= (strcase (nth 1 d)) "KP") ;; 
      )
     devices
   )
