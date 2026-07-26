@@ -87,11 +87,6 @@
 (setq *it-leader-text-height* 0.125)
 
 
-(setq *it-layer-cable* "E-SEC-WIRE")
-
-(setq *it-layer-device* "E-SERT-IDS")
-
-(setq *it-layer-text* "E-SERT-IDS-TEXT")
 
 
 
@@ -117,3 +112,35 @@
 (setq *it-daisy-device-spacing* 1.0)
 
 
+;; ============================================================
+;; Layer Settings
+;; ============================================================
+
+(setq *it-layer-cable* "E-SEC-WIRE")
+
+; (setq *it-layer-device* "E-SERT-IDS")
+
+; (setq *it-layer-text* "E-SERT-IDS-TEXT")
+
+
+(defun it-set-system (system /) 
+  ;; normalize
+  (setq system (strcase system))
+
+  ;; validate
+  (if (not (member system '("ACS" "IDS" "CCTV"))) 
+    (progn 
+      (prompt "\nERROR: Invalid system type.")
+      (exit)
+    )
+  )
+
+  ;; store globally
+  (setq *it-system* system)
+
+  ;; set layers dynamically
+  (setq *it-layer-device* (strcat "E-SERT-" system))
+  (setq *it-layer-text* (strcat "E-SERT-" system "-TEXT"))
+
+  (prompt (strcat "\nSystem set to: " system))
+)

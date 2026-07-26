@@ -9,35 +9,6 @@
 ; (setq *it-device-library* nil)
 (setq *it-panel-library* nil)
 
-; temp
-(setq *it-project-folder* "C:/Users/darko/Desktop/Athabasca/COMP495/Project2.0/Intrusion")
-
-;; ------------------------------------------------------------
-;; Load Device Library
-;; ------------------------------------------------------------
-
-; (defun it-load-device-library (/ file rows) 
-
-;   (setq file (strcat 
-;                *it-project-folder*
-;                "\\libraries\\it_device_library.csv"
-;              )
-;   )
-
-
-;   (setq rows (parse-csv 
-;                (read-csv file)
-;              )
-;   )
-
-
-;   (setq *it-device-library* rows)
-
-
-;   (prompt "\nIntrusion device library loaded.")
-; )
-
-
 
 ;; ------------------------------------------------------------
 ;; Load Panel Library
@@ -46,8 +17,8 @@
 (defun it-load-panel-library (/ file rows) 
 
   (setq file (strcat 
-               *it-project-folder*
-               "\\libraries\\it_panel_library.csv"
+               *it-lisp-path*
+               "\\..\\libraries\\panel_library.csv"
              )
   )
 
