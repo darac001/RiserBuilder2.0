@@ -103,37 +103,84 @@
 ;; - panel height
 
 
-(defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows)
+; (defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows)
 
-  ;; Home run rows
+;   ;; Home run rows
+;   (setq home-devices (get-it-home-run-devices panel))
+;   (setq home-rows (length (split-it-device-rows home-devices)))
+
+
+;   ;; Daisy chain rows
+;   (setq daisy-devices (get-it-daisy-devices panel))
+;   (setq daisy-loops (length (get-it-daisy-loops daisy-devices)))
+  
+;     ;; Debug
+;   (prompt (strcat "\nHome rows: " (itoa home-rows)))
+;   (prompt (strcat "\nDaisy loops: " (itoa daisy-loops)))
+
+
+;   ;; Total rows below panel
+;   (setq total-rows (+ home-rows daisy-loops))
+  
+;    (prompt (strcat "\nTotal rows: " (itoa total-rows)))
+
+
+;   (+ 
+;     *it-panel-height*
+
+;     ;; drop below panel
+;     *it-device-drop*
+
+;     ;; spacing between rows
+;     (* 
+;       (max 0 (- total-rows 1))
+;       *it-row-spacing*
+;     )
+;   )
+; )
+
+(defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows spacing)
+
+  ;; Home runs
   (setq home-devices (get-it-home-run-devices panel))
-  (setq home-rows (length (split-it-device-rows home-devices)))
+  (setq home-rows
+        (if home-devices
+          (length (split-it-device-rows home-devices))
+          0
+        )
+  )
 
-
-  ;; Daisy chain rows
+  ;; Daisy chains
   (setq daisy-devices (get-it-daisy-devices panel))
-  (setq daisy-loops (length (get-it-daisy-loops daisy-devices)))
+  (setq daisy-loops
+        (if daisy-devices
+          (length (get-it-daisy-loops daisy-devices))
+          0
+        )
+  )
 
-
-  ;; Total rows below panel
+  ;; Total rows
   (setq total-rows (+ home-rows daisy-loops))
 
+  ;; Spacing calculation (current logic)
+  (setq spacing (* (max 0 (- total-rows 1)) *it-row-spacing*))
 
+  ;; DEBUG LOGGING
+  (it-debug-log "----------------------------")
+  (it-debug-log (strcat "Panel: " (vl-princ-to-string panel)))
+  (it-debug-log (strcat "Home rows: " (itoa home-rows)))
+  (it-debug-log (strcat "Daisy loops: " (itoa daisy-loops)))
+  (it-debug-log (strcat "Total rows: " (itoa total-rows)))
+  (it-debug-log (strcat "Row spacing: " (rtos *it-row-spacing* 2 3)))
+  (it-debug-log (strcat "Computed spacing: " (rtos spacing 2 3)))
+
+  ;; Final height
   (+ 
     *it-panel-height*
-
-    ;; drop below panel
     *it-device-drop*
-
-    ;; spacing between rows
-    (* 
-      (max 0 (- total-rows 1))
-      *it-row-spacing*
-    )
+    spacing
   )
 )
-
-
 
 
 (defun get-it-daisy-devices (panel / devices result device) 
@@ -285,6 +332,7 @@
   (vl-remove-if-not
     '(lambda (d)
        (= (strcase (nth 1 d)) "KP") ;; 
+
      )
     devices
   )

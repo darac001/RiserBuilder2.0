@@ -12,7 +12,9 @@
 
 ;; Vertical spacing between panels
 
-(setq *it-panel-spacing* 7.0)
+(setq *it-panel-spacing* 3.5)
+
+(setq *it-psu-vertical-spacing* 0.5)
 
 
 ;;horizontal step

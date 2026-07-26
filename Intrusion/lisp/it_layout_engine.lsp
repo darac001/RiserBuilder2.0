@@ -116,7 +116,7 @@
                         (car base-point)
                         (+ (cadr base-point) 
                            *it-panel-height*
-                           1.0
+                           *it-psu-vertical-spacing*
                         )
                       )
       )
@@ -736,46 +736,107 @@
   ;; ------------------------------------------------------------
   ;; Draw Complete Intrusion Riser
   ;; ------------------------------------------------------------
-(defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height) 
+; (defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height) 
 
-  ;; Main entry point for intrusion riser generation
-  ;; Draws all panels vertically with calculated spacing
+;   ;; Main entry point for intrusion riser generation
+;   ;; Draws all panels vertically with calculated spacing
+
+;   (prompt "\n--- Drawing Intrusion Riser ---")
+
+;   ;; Disable osnap during automated drawing
+;   (setq old-osnap (getvar "OSMODE"))
+;   (setvar "OSMODE" 0)
+
+;   ;; Starting Y coordinate
+;   (setq y 0)
+;   (setq y 0)
+
+;   ;; Draw each panel
+;   (foreach panel system-data 
+
+;     ;; Calculate required height for current panel
+;     (setq panel-height (it-get-panel-layout-height panel))
+
+
+;     ;; Layout panel and connected devices
+;     (it-layout-panel 
+;       panel
+;       (list 0 y)
+;       cable-data
+;     )
+
+
+;     ;;; Move upward for next panel
+;     (setq y (+ y 
+;                panel-height
+;                *it-panel-spacing*
+;             )
+;     )
+;   )
+
+;   ;; Restore original osnap setting
+;   (setvar "OSMODE" old-osnap)
+
+;   (prompt "\nIntrusion riser complete.")
+;   (princ)
+; )
+
+(defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height idx) 
 
   (prompt "\n--- Drawing Intrusion Riser ---")
 
-  ;; Disable osnap during automated drawing
+  ;; Disable osnap
   (setq old-osnap (getvar "OSMODE"))
   (setvar "OSMODE" 0)
 
-  ;; Starting Y coordinate
+  ;; Start Y
   (setq y 0)
-  (setq y 0)
+  (setq idx 0)
 
-  ;; Draw each panel
+  (it-debug-log "============================")
+  (it-debug-log "START RISER DRAW")
+
+  ;; Loop panels
   (foreach panel system-data 
 
-    ;; Calculate required height for current panel
+    (setq idx (1+ idx))
+
+    ;; Log BEFORE calculation
+    (it-debug-log (strcat "\nPanel #" (itoa idx)))
+    (it-debug-log (strcat "Start Y: " (rtos y 2 3)))
+
+    ;; Calculate height
     (setq panel-height (it-get-panel-layout-height panel))
 
+    (it-debug-log (strcat "Panel height: " (rtos panel-height 2 3)))
+    (it-debug-log (strcat "Panel spacing: " (rtos *it-panel-spacing* 2 3)))
 
-    ;; Layout panel and connected devices
+    ;; Draw panel
     (it-layout-panel 
       panel
       (list 0 y)
       cable-data
     )
 
+    ;; Calculate next Y
+    (setq next-panel (cadr (member panel system-data)))
 
-    ;;; Move upward for next panel
-    (setq y (+ y 
-               panel-height
-               *it-panel-spacing*
-            )
+    (if next-panel 
+      (setq next-height (it-get-panel-layout-height next-panel))
+      (setq next-height 0)
     )
+
+    (setq y (+ y next-height *it-panel-spacing*))
+
+    ;; Log AFTER movement
+    (it-debug-log (strcat "Next Y: " (rtos y 2 3)))
   )
 
-  ;; Restore original osnap setting
+  ;; Restore osnap
   (setvar "OSMODE" old-osnap)
+
+  (it-debug-log "END RISER DRAW")
+  (it-debug-log "============================")
 
   (prompt "\nIntrusion riser complete.")
   (princ)
