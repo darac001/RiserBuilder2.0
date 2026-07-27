@@ -1,0 +1,2 @@
+use riser.dwg only as it has set styles and units properly
+add styles and unit setting as part of the project files (add to readme)

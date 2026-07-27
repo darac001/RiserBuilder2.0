@@ -1,0 +1,3 @@
+﻿Order,Device ID,Panel ID,Panel Type,Panel Block Name,Cable(s),Devices,Device Block Names,Loop Type,Loop No.
+1,DC#01,IDCP-01,IDCP_PS,IDCP_FULL,B,DC,IDS_DC_Door_Contact,Daisy_Chain,1
+2,DC#02,IDCP-01,IDCP_PS,IDCP_FULL,B,DC,IDS_DC_Door_Contact,Daisy_Chain,1
