@@ -11,21 +11,22 @@
 
 
 
-;; ------------------------------------------------------------
 ;; Global Project Data
-;; ------------------------------------------------------------
 (vl-load-com)
 (prompt "\n*** LOADING CURRENT IT_MAIN.LSP ***")
 (setq *it-model* nil)
 (setq *it-cable-data* nil)
+
+
+;;Writes to registry (see regedit on Windows cmd)
 (setq *it-registry* "HKEY_CURRENT_USER\\Software\\RiserBuilder")
 
 
-(defun it-debug-log (msg / file) 
-  (setq file (open "C:/temp/it_debug.txt" "a"))
-  (write-line msg file)
-  (close file)
-)
+; (defun it-debug-log (msg / file) 
+;   (setq file (open "C:/temp/it_debug.txt" "a"))
+;   (write-line msg file)
+;   (close file)
+; )
 
 
 ;; ------------------------------------------------------------
@@ -44,11 +45,9 @@
     )
   )
 
-
   (if (not *it-lisp-path*) 
     (setq *it-lisp-path* (getstring T "\nEnter Riser Builder LISP folder path: "))
   )
-
 
   (if *it-lisp-path* 
 
@@ -67,8 +66,7 @@
   )
 
   (prompt "\n--- Riser Modules ---")
-
-
+  
   (load (strcat *it-lisp-path* "\\it_input_parser.lsp"))
   (load (strcat *it-lisp-path* "\\it_data_model.lsp"))
   (load (strcat *it-lisp-path* "\\it_data_model_helpers.lsp"))
@@ -93,7 +91,6 @@
       (prompt "\nInvalid input. Try again.")
     )
   )
-
   ;; pass to settings
   (it-set-system system)
 )
@@ -118,7 +115,6 @@
 (defun it-validate-project (/ ok input-file library-file) 
 
   (setq ok T)
-
   (setq input-file (strcat *it-project-folder* "input.csv"))
   (if (not (findfile input-file)) 
     (progn 
@@ -134,7 +130,6 @@
       (setq ok nil)
     )
   )
-
   ok
 )
 
@@ -164,19 +159,16 @@
 
 
 
-;; Update Riser Builder Paths
+
 ;; Update Riser Builder Paths
 (defun c:IT-UPDATE-PATHS (/ project-folder) 
 
   (prompt "\n--- Update Riser Builder Paths ---")
 
 
-  ;; ---------------------------------
   ;; Update LISP folder
-  ;; ---------------------------------
-
+  
   (setq *it-lisp-path* (getstring T "\nEnter Riser Builder LISP folder path: "))
-
 
   ;; Validate LISP folder
   (while (not (vl-file-directory-p *it-lisp-path*)) 
@@ -186,7 +178,6 @@
     (setq *it-lisp-path* (getstring T "\nEnter Riser Builder LISP folder path: "))
   )
 
-
   ;; Save LISP path
   (vl-registry-write 
     *it-registry*
@@ -195,10 +186,8 @@
   )
 
 
-  ;; ---------------------------------
-  ;; Update Project folder
-  ;; ---------------------------------
-
+  
+  ;; Update Project folder  
   (setq project-folder (getstring T "\nEnter project folder path: "))
 
 
@@ -215,10 +204,8 @@
   (it-set-project-folder project-folder)
 
 
-  ;; ---------------------------------
   ;; Clear old project data
-  ;; ---------------------------------
-
+  
   (setq *it-model* nil)
   (setq *it-cable-data* nil)
   (setq *it-input-data* nil)
@@ -250,10 +237,6 @@
   (prompt "\n--- Initializing Project ---")
 
 
-  ;; Ask for project folder
-
-  ; (setq folder (getstring T "\nEnter project folder path: "))
-
   (setq folder (vl-registry-read 
                  *it-registry*
                  "ProjectPath"
@@ -263,7 +246,6 @@
   (if (not folder) 
     (setq folder (getstring T "\nEnter project folder path: "))
   )
-
 
   (if folder 
     (it-set-project-folder folder)
@@ -311,23 +293,20 @@
   (princ)
 )
 
+
 ;; ------------------------------------------------------------
-;; Convenience Command
-;;
-;; Load + Initialize + Draw
+;; Main function, loads files, intiaalizes and draws the riser.
 ;; ------------------------------------------------------------
 
 (defun c:IT-START (/) 
 
-
   ;; Clear debug log
-  (setq f (open "C:/temp/it_debug.txt" "w"))
-  (close f)
+  ; (setq f (open "C:/temp/it_debug.txt" "w"))
+  ; (close f)
 
   (IT-SELECT-SYSTEM)
 
   (IT-LOAD)
-
 
   (if (IT-INIT) 
 
@@ -341,7 +320,6 @@
 
   (princ)
 )
-
 
 
 
@@ -365,7 +343,6 @@
     )
     (setq library-file nil)
   )
-
 
   (prompt "\n==============================")
   (prompt "\n Riser Builder Configuration")
@@ -417,10 +394,8 @@
   (princ)
 )
 
-  ;; ------------------------------------------------------------
-  ;; Reset Current Riser Session Data
-  ;; ------------------------------------------------------------
 ;; ------------------------------------------------------------
+;; Reset Current Riser Session Data
 ;; Clear Saved Riser Builder Paths
 ;;
 ;; Removes registry saved paths

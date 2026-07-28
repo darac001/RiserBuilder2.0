@@ -10,9 +10,8 @@
 (setq *it-panel-library* nil)
 
 
-;; ------------------------------------------------------------
+
 ;; Load Panel Library
-;; ------------------------------------------------------------
 
 (defun it-load-panel-library (/ file rows) 
 
@@ -30,7 +29,7 @@
 )
 
 
-
+;; (Not used)
 ;; ------------------------------------------------------------
 ;; Find device block
 ;;
@@ -68,6 +67,8 @@
 ;;
 ;; ------------------------------------------------------------
 
+
+;; Gets panel block name
 (defun get-it-panel-block (panel-type / item) 
   (setq item nil)
 
@@ -76,15 +77,11 @@
       (setq item (nth 1 row))
     )
   )
-
-
   item
 )
 
 
-;; ------------------------------------------------------------
 ;; Check if panel requires PSU
-;; ------------------------------------------------------------
 
 (defun it-panel-requires-psu (panel-type / item) 
 
@@ -94,14 +91,10 @@
       (setq item (nth 2 row))
     )
   )
-
-
   (= item "YES")
 )
 
-;; ------------------------------------------------------------
 ;; Get PSU block
-;; ------------------------------------------------------------
 
 (defun get-it-panel-ps-block (panel-type / item) 
   (setq item nil)

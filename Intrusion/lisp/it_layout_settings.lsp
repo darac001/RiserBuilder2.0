@@ -2,18 +2,19 @@
 ;; Intrusion Riser Layout Settings
 ;; ============================================================
 
+;; ------------------------------------------------------------
+;; Panel settings
+;; --------
 
 ;; Panel dimensions
 
 (setq *it-panel-width* 1.375)
-
 (setq *it-panel-height* 1.4375)
 
 
 ;; Vertical spacing between panels
 
 (setq *it-panel-spacing* 3.5)
-
 (setq *it-psu-vertical-spacing* 0.5)
 
 
@@ -25,12 +26,9 @@
 (setq *it-device-spacing* 1.5)
 
 
-
 ;; Maximum devices per horizontal row
 
 (setq *it-device-limit* 8)
-
-
 
 
 
@@ -90,8 +88,6 @@
 
 
 
-
-
 ;; Devices
 
 (setq *it-device-width* 0.21702924) 
@@ -100,6 +96,7 @@
 
 
 ;; Daisy chain settings
+
 
 
 ;; ============================================================
@@ -114,6 +111,7 @@
 (setq *it-daisy-device-spacing* 1.0)
 
 
+
 ;; ============================================================
 ;; Layer Settings
 ;; ============================================================
@@ -124,6 +122,10 @@
 
 ; (setq *it-layer-text* "E-SERT-IDS-TEXT")
 
+
+
+;; Sets system type (when prompted on command line)
+;; Selects layers used in AutoCAD file
 
 (defun it-set-system (system /) 
   ;; normalize

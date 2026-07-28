@@ -195,7 +195,11 @@
 )
 
 
-
+;; Draws all home-run loops from panel to all devices
+;; Devices are placed from panel outward in sequence
+;; ------------------------ PANEL
+;; |     |     |     |
+;; D1    D2    D3    D4
 
 (defun it-layout-home-runs (panel base-point cable-data row-index / devices 
                             device-rows panel-left trunk-start trunk-end x y row-y 
@@ -732,54 +736,6 @@
   )
 )
 
-
-  ;; ------------------------------------------------------------
-  ;; Draw Complete Intrusion Riser
-  ;; ------------------------------------------------------------
-; (defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height) 
-
-;   ;; Main entry point for intrusion riser generation
-;   ;; Draws all panels vertically with calculated spacing
-
-;   (prompt "\n--- Drawing Intrusion Riser ---")
-
-;   ;; Disable osnap during automated drawing
-;   (setq old-osnap (getvar "OSMODE"))
-;   (setvar "OSMODE" 0)
-
-;   ;; Starting Y coordinate
-;   (setq y 0)
-;   (setq y 0)
-
-;   ;; Draw each panel
-;   (foreach panel system-data 
-
-;     ;; Calculate required height for current panel
-;     (setq panel-height (it-get-panel-layout-height panel))
-
-
-;     ;; Layout panel and connected devices
-;     (it-layout-panel 
-;       panel
-;       (list 0 y)
-;       cable-data
-;     )
-
-
-;     ;;; Move upward for next panel
-;     (setq y (+ y 
-;                panel-height
-;                *it-panel-spacing*
-;             )
-;     )
-;   )
-
-;   ;; Restore original osnap setting
-;   (setvar "OSMODE" old-osnap)
-
-;   (prompt "\nIntrusion riser complete.")
-;   (princ)
-; )
 
 (defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height idx) 
 
