@@ -21,17 +21,11 @@
                "\\..\\libraries\\panel_library.csv"
              )
   )
-
-
   (setq rows (parse-csv 
                (read-csv file)
              )
   )
-
-
   (setq *it-panel-library* rows)
-
-
   (prompt "\nIntrusion panel library loaded.")
 )
 
@@ -49,14 +43,10 @@
 ;; ------------------------------------------------------------
 
 ; (defun get-it-device-block (acronym / item) 
-
 ;   (setq item nil)
 
-
 ;   (foreach row *it-device-library* 
-
 ;     (if (= acronym (nth 0 row)) 
-
 ;       (setq item (nth 1 row))
 ;     )
 ;   )
@@ -79,14 +69,10 @@
 ;; ------------------------------------------------------------
 
 (defun get-it-panel-block (panel-type / item) 
-
   (setq item nil)
 
-
   (foreach row *it-panel-library* 
-
     (if (= panel-type (nth 0 row)) 
-
       (setq item (nth 1 row))
     )
   )
@@ -96,7 +82,6 @@
 )
 
 
-
 ;; ------------------------------------------------------------
 ;; Check if panel requires PSU
 ;; ------------------------------------------------------------
@@ -104,12 +89,8 @@
 (defun it-panel-requires-psu (panel-type / item) 
 
   (setq item nil)
-
-
   (foreach row *it-panel-library* 
-
     (if (= panel-type (nth 0 row)) 
-
       (setq item (nth 2 row))
     )
   )
@@ -118,25 +99,17 @@
   (= item "YES")
 )
 
-
-
 ;; ------------------------------------------------------------
 ;; Get PSU block
 ;; ------------------------------------------------------------
 
 (defun get-it-panel-ps-block (panel-type / item) 
-
   (setq item nil)
 
-
   (foreach row *it-panel-library* 
-
     (if (= panel-type (nth 0 row)) 
-
       (setq item (nth 3 row))
     )
   )
-
-
   item
 )

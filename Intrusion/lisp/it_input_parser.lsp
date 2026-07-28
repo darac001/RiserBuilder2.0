@@ -170,37 +170,15 @@
 ;;; ============================================================
 
 (defun it-load-input (/ filename) 
-
   
   (setq filename (strcat *it-project-folder* "input.csv"))
 
-
   (setq *it-input-lines* (read-csv filename))
 
-
   (setq *it-input-data* (parse-csv *it-input-lines*))
-
 
   (prompt "\nIntrusion input CSV loaded.")
 
   (princ)
 )
 
-(defun c:TEST-IT-LOAD () 
-
-  (prompt "\n--- Testing Intrusion Input Load ---")
-
-  (it-load-input)
-
-
-  (prompt "\n\nLast row:")
-
-  (princ 
-    (car (last *it-input-data*))
-  )
-
-
-  (prompt "\n\nLoad test complete.")
-
-  (princ)
-)
