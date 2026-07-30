@@ -10,9 +10,7 @@
 (setq *it-panel-library* nil)
 
 
-
 ;; Load Panel Library
-
 (defun it-load-panel-library (/ file rows) 
 
   (setq file (strcat 
@@ -56,16 +54,6 @@
 
 
 
-;; ------------------------------------------------------------
-;; Find panel block
-;;
-;; Input:
-;;   IDCP
-;;
-;; Output:
-;;   IDCP_FULL
-;;
-;; ------------------------------------------------------------
 
 
 ;; Gets panel block name
@@ -80,9 +68,7 @@
   item
 )
 
-
 ;; Check if panel requires PSU
-
 (defun it-panel-requires-psu (panel-type / item) 
 
   (setq item nil)
@@ -95,7 +81,6 @@
 )
 
 ;; Get PSU block
-
 (defun get-it-panel-ps-block (panel-type / item) 
   (setq item nil)
 

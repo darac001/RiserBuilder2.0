@@ -2,10 +2,11 @@
 ;; Intrusion Riser Main Controller
 ;;
 ;; Responsibilities:
-;; - Load intrusion riser modules
+;; - Load riser modules
 ;; - Initialize project data
 ;; - Build data models
 ;; - Start drawing
+;; - Rwset/Update saved project paths
 ;;
 ;; ============================================================
 
@@ -165,16 +166,13 @@
 
   (prompt "\n--- Update Riser Builder Paths ---")
 
-
-  ;; Update LISP folder
-  
+  ;; Update LISP folder  
   (setq *it-lisp-path* (getstring T "\nEnter Riser Builder LISP folder path: "))
 
   ;; Validate LISP folder
   (while (not (vl-file-directory-p *it-lisp-path*)) 
 
     (prompt "\nInvalid LISP folder.")
-
     (setq *it-lisp-path* (getstring T "\nEnter Riser Builder LISP folder path: "))
   )
 
@@ -195,7 +193,6 @@
   (while (not (vl-file-directory-p project-folder)) 
 
     (prompt "\nInvalid project folder.")
-
     (setq project-folder (getstring T "\nEnter project folder path: "))
   )
 
@@ -233,9 +230,7 @@
   (setq *it-input-data* nil)
   (setq *it-panel-library* nil)
 
-
   (prompt "\n--- Initializing Project ---")
-
 
   (setq folder (vl-registry-read 
                  *it-registry*
@@ -286,7 +281,6 @@
   (if (IT-INIT) 
 
     (prompt "\nProject re-initialized successfully.")
-
     (prompt "\nInitialization failed.")
   )
 
@@ -305,7 +299,6 @@
   ; (close f)
 
   (IT-SELECT-SYSTEM)
-
   (IT-LOAD)
 
   (if (IT-INIT) 
@@ -441,7 +434,6 @@
   (if (and *it-model* *it-cable-data*) 
 
     (progn 
-
       (prompt "\n--- Drawing Riser ---")
 
       (IT-DRAW-RISER 

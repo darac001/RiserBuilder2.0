@@ -4,7 +4,7 @@
 
 ;; ------------------------------------------------------------
 ;; Panel settings
-;; --------
+;; ------------------------------------------------------------
 
 ;; Panel dimensions
 
@@ -95,9 +95,6 @@
 (setq *it-device-height* 0.21702924)
 
 
-;; Daisy chain settings
-
-
 
 ;; ============================================================
 ;; Daisy Chain Settings
@@ -126,7 +123,6 @@
 
 ;; Sets system type (when prompted on command line)
 ;; Selects layers used in AutoCAD file
-
 (defun it-set-system (system /) 
   ;; normalize
   (setq system (strcase system))

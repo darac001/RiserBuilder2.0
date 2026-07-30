@@ -12,34 +12,18 @@
 ;;   - Group daisy-chain devices by loop number
 ;;   - Retrieve keypad devices
 ;;
-;; Device structure:
-;;
-;;   (
-;;     Device ID
-;;     Device Type
-;;     Block Name
-;;     Cable
-;;     Loop Type
-;;     Loop Number
-;;   )
-;;
 ;; ============================================================
 
 
 ;; Return home-run devices from panel
 
 (defun get-it-home-run-devices (panel / result device) 
-
   (setq result '())
-
   (foreach device (nth 3 panel) 
-
     (if (= (nth 4 device) "Home_Run") 
-
       (setq result (cons device result))
     )
   )
-
   (reverse result)
 )
 
@@ -47,20 +31,15 @@
 
 ;; Return daisy-chain devices from panel
 
-(defun get-it-daisy-chain-devices (panel / result device) 
-
-  (setq result '())
-
-  (foreach device (nth 3 panel) 
-
-    (if (= (nth 4 device) "Daisy_Chain") 
-
-      (setq result (cons device result))
-    )
-  )
-
-  (reverse result)
-)
+; (defun get-it-daisy-chain-devices (panel / result device) 
+;   (setq result '())
+;   (foreach device (nth 3 panel) 
+;     (if (= (nth 4 device) "Daisy_Chain") 
+;       (setq result (cons device result))
+;     )
+;   )
+;   (reverse result)
+; )
 
 
 ;; Split devices into drawing rows based on device limit
@@ -90,73 +69,27 @@
   (if row 
     (setq rows (append rows (list row)))
   )
-
   rows
 )
 
-;; Calculate panel layout height
-;;
-;; Determines vertical space needed for a panel based on:
-;; - number of home run device rows
-;; - row spacing
-;; - device drop
-;; - panel height
-
-
-; (defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows)
-
-;   ;; Home run rows
-;   (setq home-devices (get-it-home-run-devices panel))
-;   (setq home-rows (length (split-it-device-rows home-devices)))
-
-
-;   ;; Daisy chain rows
-;   (setq daisy-devices (get-it-daisy-devices panel))
-;   (setq daisy-loops (length (get-it-daisy-loops daisy-devices)))
-  
-;     ;; Debug
-;   (prompt (strcat "\nHome rows: " (itoa home-rows)))
-;   (prompt (strcat "\nDaisy loops: " (itoa daisy-loops)))
-
-
-;   ;; Total rows below panel
-;   (setq total-rows (+ home-rows daisy-loops))
-  
-;    (prompt (strcat "\nTotal rows: " (itoa total-rows)))
-
-
-;   (+ 
-;     *it-panel-height*
-
-;     ;; drop below panel
-;     *it-device-drop*
-
-;     ;; spacing between rows
-;     (* 
-;       (max 0 (- total-rows 1))
-;       *it-row-spacing*
-;     )
-;   )
-; )
-
-(defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices daisy-loops total-rows spacing)
+(defun it-get-panel-layout-height (panel / home-devices home-rows daisy-devices 
+                                   daisy-loops total-rows spacing
+                                  ) 
 
   ;; Home runs
   (setq home-devices (get-it-home-run-devices panel))
-  (setq home-rows
-        (if home-devices
-          (length (split-it-device-rows home-devices))
-          0
-        )
+  (setq home-rows (if home-devices 
+                    (length (split-it-device-rows home-devices))
+                    0
+                  )
   )
 
   ;; Daisy chains
   (setq daisy-devices (get-it-daisy-devices panel))
-  (setq daisy-loops
-        (if daisy-devices
-          (length (get-it-daisy-loops daisy-devices))
-          0
-        )
+  (setq daisy-loops (if daisy-devices 
+                      (length (get-it-daisy-loops daisy-devices))
+                      0
+                    )
   )
 
   ;; Total rows
@@ -166,13 +99,13 @@
   (setq spacing (* (max 0 (- total-rows 1)) *it-row-spacing*))
 
   ;; DEBUG LOGGING
-  (it-debug-log "----------------------------")
-  (it-debug-log (strcat "Panel: " (vl-princ-to-string panel)))
-  (it-debug-log (strcat "Home rows: " (itoa home-rows)))
-  (it-debug-log (strcat "Daisy loops: " (itoa daisy-loops)))
-  (it-debug-log (strcat "Total rows: " (itoa total-rows)))
-  (it-debug-log (strcat "Row spacing: " (rtos *it-row-spacing* 2 3)))
-  (it-debug-log (strcat "Computed spacing: " (rtos spacing 2 3)))
+  ; (it-debug-log "----------------------------")
+  ; (it-debug-log (strcat "Panel: " (vl-princ-to-string panel)))
+  ; (it-debug-log (strcat "Home rows: " (itoa home-rows)))
+  ; (it-debug-log (strcat "Daisy loops: " (itoa daisy-loops)))
+  ; (it-debug-log (strcat "Total rows: " (itoa total-rows)))
+  ; (it-debug-log (strcat "Row spacing: " (rtos *it-row-spacing* 2 3)))
+  ; (it-debug-log (strcat "Computed spacing: " (rtos spacing 2 3)))
 
   ;; Final height
   (+ 
@@ -184,16 +117,11 @@
 
 
 (defun get-it-daisy-devices (panel / devices result device) 
-
   (setq devices (nth 3 panel))
-
   (setq result '())
 
-
   (foreach device devices 
-
     (if (= "Daisy_Chain" (nth 4 device)) 
-
       (setq result (cons device result))
     )
   )
@@ -206,17 +134,14 @@
 (defun get-it-daisy-loops (panel / devices loops device loop-no existing) 
 
   (setq devices (get-it-daisy-devices panel))
-
   (setq loops '())
-
+  
   (foreach device devices 
 
     (setq loop-no (nth 5 device))
-
     (setq existing (assoc loop-no loops))
 
     (if existing 
-
       ;; add device to existing loop
       (setq loops (subst 
                     (cons loop-no 
@@ -326,13 +251,12 @@
 
 
 ;; Return keypad devices from panel
-(defun get-it-keypad-devices (panel / devices)
-  (setq devices (nth 3 panel)) ;; 
+(defun get-it-keypad-devices (panel / devices) 
+  (setq devices (nth 3 panel)) ;;
 
-  (vl-remove-if-not
-    '(lambda (d)
-       (= (strcase (nth 1 d)) "KP") ;; 
-
+  (vl-remove-if-not 
+    '(lambda (d) 
+       (= (strcase (nth 1 d)) "KP") ;;
      )
     devices
   )

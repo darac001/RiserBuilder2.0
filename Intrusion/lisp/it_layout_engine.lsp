@@ -49,46 +49,6 @@
 
 
 
-;; Inserts panel block and returns inserted entity reference
-(defun it-insert-panel (block-name insert-point / ent) 
-  (rb-set-layer *it-layer-device*)
-  (command "_-INSERT" block-name insert-point 1 1 0 "")
-
-  (setq ent (entlast))
-
-  ent
-)
-
-;; Inserts external PSU block on device layer
-(defun it-insert-psu (block-name insert-point) 
-
-  (rb-set-layer *it-layer-device*)
-
-  (command "_-INSERT" block-name insert-point 1 1 0 "")
-)
-
- ;; Creates layer if missing and sets it as current layer
-(defun rb-set-layer (layer-name) 
-  (if (not (tblsearch "LAYER" layer-name)) 
-    (command "-LAYER" "M" layer-name "")
-  )
-  (setvar "CLAYER" layer-name)
-)
-
-;; Returns connection point shifted right by device width
-(defun get-it-daisy-right-point (insert-point) 
-
-  (list 
-    (+ (car insert-point) 
-       *it-device-width*
-    )
-
-    (cadr insert-point)
-  )
-)
-
-
-
 ;; Controls complete layout process for one panel
 ;; Draws panel, PSU, home runs, daisy loops, and keypads
 (defun it-layout-panel (panel base-point cable-data / panel-type block-name psu-block 
@@ -365,77 +325,6 @@
   (setq row-index (length device-rows))
   row-index
 ) ;; end function
-
-;; Inserts device block on device layer
-(defun it-insert-device (block-name insert-point) 
-  (rb-set-layer *it-layer-device*)
-  (command "_-INSERT" block-name insert-point 1 1 0 "")
-)
-
-;; Places device identifier text near device block
-(defun it-place-device-id (device insert-point / label pt) 
-
-  ;; assume device structure: (... ID TYPE BLOCK ...)
-  (setq label (nth 0 device))
-
-  (setq pt (list 
-             (+ (car insert-point) *it-device-id-x-offset*)
-             (+ (cadr insert-point) *it-device-id-offset*)
-           )
-  )
-
-  (rb-set-layer *it-layer-text*)
-  (command "TEXT" pt *it-device-id-text-height* 0 label)
-)
-
-;; Creates cable leader with supplied cable label
-(defun it-draw-leader (wire-point text-point text) 
-  (rb-set-layer *it-layer-cable*)
-  (command 
-    "_MLEADER"
-    wire-point
-    text-point
-    (strcat text "")
-    ""
-  )
-)
-
-
-;; Updates matching attribute value in block reference (for panel ID)
-(defun it-set-attribute (entity tag value / att) 
-
-  (setq att (entnext entity))
-
-  ;; Search through block attributes
-  (while att 
-
-    (if (= "ATTRIB" (cdr (assoc 0 (entget att)))) 
-
-      ;; Check attribute tag and update value
-      (if 
-        (= (strcase tag) 
-           (strcase (cdr (assoc 2 (entget att))))
-        )
-
-        (progn 
-
-          (entmod 
-            (subst 
-              (cons 1 value)
-              (assoc 1 (entget att))
-              (entget att)
-            )
-          )
-
-          (entupd att)
-        )
-      )
-    )
-
-    (setq att (entnext att))
-  )
-)
-
 
 
 
@@ -737,6 +626,117 @@
 )
 
 
+
+;;Helpers
+;; Inserts panel block and returns inserted entity reference
+(defun it-insert-panel (block-name insert-point / ent) 
+  (rb-set-layer *it-layer-device*)
+  (command "_-INSERT" block-name insert-point 1 1 0 "")
+
+  (setq ent (entlast))
+
+  ent
+)
+
+;; Inserts external PSU block on device layer
+(defun it-insert-psu (block-name insert-point) 
+
+  (rb-set-layer *it-layer-device*)
+
+  (command "_-INSERT" block-name insert-point 1 1 0 "")
+)
+
+
+ ;; Creates layer if missing and sets it as current layer
+(defun rb-set-layer (layer-name) 
+  (if (not (tblsearch "LAYER" layer-name)) 
+    (command "-LAYER" "M" layer-name "")
+  )
+  (setvar "CLAYER" layer-name)
+)
+
+;; Returns connection point shifted right by device width
+(defun get-it-daisy-right-point (insert-point) 
+
+  (list 
+    (+ (car insert-point) 
+       *it-device-width*
+    )
+
+    (cadr insert-point)
+  )
+)
+
+;; Inserts device block on device layer
+(defun it-insert-device (block-name insert-point) 
+  (rb-set-layer *it-layer-device*)
+  (command "_-INSERT" block-name insert-point 1 1 0 "")
+)
+
+;; Places device identifier text near device block
+(defun it-place-device-id (device insert-point / label pt) 
+
+  ;; assume device structure: (... ID TYPE BLOCK ...)
+  (setq label (nth 0 device))
+
+  (setq pt (list 
+             (+ (car insert-point) *it-device-id-x-offset*)
+             (+ (cadr insert-point) *it-device-id-offset*)
+           )
+  )
+
+  (rb-set-layer *it-layer-text*)
+  (command "TEXT" pt *it-device-id-text-height* 0 label)
+)
+
+;; Creates cable leader with supplied cable label
+(defun it-draw-leader (wire-point text-point text) 
+  (rb-set-layer *it-layer-cable*)
+  (command 
+    "_MLEADER"
+    wire-point
+    text-point
+    (strcat text "")
+    ""
+  )
+)
+
+;; Updates matching attribute value in block reference (for panel ID)
+(defun it-set-attribute (entity tag value / att) 
+
+  (setq att (entnext entity))
+
+  ;; Search through block attributes
+  (while att 
+
+    (if (= "ATTRIB" (cdr (assoc 0 (entget att)))) 
+
+      ;; Check attribute tag and update value
+      (if 
+        (= (strcase tag) 
+           (strcase (cdr (assoc 2 (entget att))))
+        )
+
+        (progn 
+
+          (entmod 
+            (subst 
+              (cons 1 value)
+              (assoc 1 (entget att))
+              (entget att)
+            )
+          )
+
+          (entupd att)
+        )
+      )
+    )
+
+    (setq att (entnext att))
+  )
+)
+
+
 (defun IT-DRAW-RISER (system-data cable-data / y old-osnap panel-height idx) 
 
   (prompt "\n--- Drawing Intrusion Riser ---")
@@ -749,23 +749,23 @@
   (setq y 0)
   (setq idx 0)
 
-  (it-debug-log "============================")
-  (it-debug-log "START RISER DRAW")
+  ; (it-debug-log "============================")
+  ; (it-debug-log "START RISER DRAW")
 
   ;; Loop panels
   (foreach panel system-data 
 
     (setq idx (1+ idx))
 
-    ;; Log BEFORE calculation
-    (it-debug-log (strcat "\nPanel #" (itoa idx)))
-    (it-debug-log (strcat "Start Y: " (rtos y 2 3)))
+    ; ;; Log BEFORE calculation
+    ; (it-debug-log (strcat "\nPanel #" (itoa idx)))
+    ; (it-debug-log (strcat "Start Y: " (rtos y 2 3)))
 
     ;; Calculate height
     (setq panel-height (it-get-panel-layout-height panel))
 
-    (it-debug-log (strcat "Panel height: " (rtos panel-height 2 3)))
-    (it-debug-log (strcat "Panel spacing: " (rtos *it-panel-spacing* 2 3)))
+    ; (it-debug-log (strcat "Panel height: " (rtos panel-height 2 3)))
+    ; (it-debug-log (strcat "Panel spacing: " (rtos *it-panel-spacing* 2 3)))
 
     ;; Draw panel
     (it-layout-panel 
@@ -785,14 +785,14 @@
     (setq y (+ y next-height *it-panel-spacing*))
 
     ;; Log AFTER movement
-    (it-debug-log (strcat "Next Y: " (rtos y 2 3)))
+    ; (it-debug-log (strcat "Next Y: " (rtos y 2 3)))
   )
 
   ;; Restore osnap
   (setvar "OSMODE" old-osnap)
 
-  (it-debug-log "END RISER DRAW")
-  (it-debug-log "============================")
+  ; (it-debug-log "END RISER DRAW")
+  ; (it-debug-log "============================")
 
   (prompt "\nIntrusion riser complete.")
   (princ)
